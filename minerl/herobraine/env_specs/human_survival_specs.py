@@ -14,9 +14,7 @@ class HumanSurvival(HumanControlEnvSpec):
         if "name" not in kwargs:
             kwargs["name"] = "MineRLHumanSurvival-v0"
         self.load_filename = load_filename
-        super().__init__(
-            *args, **kwargs
-        )
+        super().__init__(*args, **kwargs)
 
     def create_observables(self) -> List[Handler]:
         return super().create_observables() + [
@@ -41,7 +39,6 @@ class HumanSurvival(HumanControlEnvSpec):
             handlers.ObserveFromFullStats("kill_entity"),
             handlers.ObserveFromFullStats(None),
         ]
-
 
     def create_rewardables(self) -> List[Handler]:
         return []

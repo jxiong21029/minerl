@@ -23,7 +23,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLTreechop-v0')
+    env = gym.make("MineRLTreechop-v0")
 
     actions = [env.action_space.sample() for _ in range(2000)]
     xposes = []
@@ -38,8 +38,7 @@ def main():
             # random_act['back'] = 0
             # random_act['forward'] = 1
             # random_act['jump'] = 1
-            obs, reward, done, info = env.step(
-                random_act)
+            obs, reward, done, info = env.step(random_act)
             netr += reward
             print(reward, netr)
             env.render()

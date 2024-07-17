@@ -46,11 +46,14 @@ class TranslationHandler(Handler):
 # TODO: ONLY WORKS FOR OBSERVATIONS.
 # TODO: Consider moving this to observations.
 class KeymapTranslationHandler(TranslationHandler):
-    def __init__(self,
-                 hero_keys: typing.List[str],
-                 univ_keys: typing.List[str],
-                 space: MineRLSpace, default_if_missing=None,
-                 to_string: str = None):
+    def __init__(
+        self,
+        hero_keys: typing.List[str],
+        univ_keys: typing.List[str],
+        space: MineRLSpace,
+        default_if_missing=None,
+        to_string: str = None,
+    ):
         """
         Wrapper for simple observations which just remaps keys.
         :param keys: list of nested dictionary keys from the root of the observation dict
@@ -63,7 +66,7 @@ class KeymapTranslationHandler(TranslationHandler):
         self.univ_keys = univ_keys
         self.default_if_missing = default_if_missing
         # TODO (R): UNIFY THE LOGGING FRAMEWORK FOR MINERL
-        self.logger = logging.getLogger(f'{__name__}.{self.to_string()}')
+        self.logger = logging.getLogger(f"{__name__}.{self.to_string()}")
 
     def walk_dict(self, d, keys):
         for key in keys:
@@ -96,8 +99,7 @@ class KeymapTranslationHandler(TranslationHandler):
 
 
 class TranslationHandlerGroup(TranslationHandler):
-    """Combines several space handlers into a single handler group.
-    """
+    """Combines several space handlers into a single handler group."""
 
     def __init__(self, handlers: List[TranslationHandler]):
         self.handlers = sorted(handlers, key=lambda x: x.to_string())
@@ -112,28 +114,20 @@ class TranslationHandlerGroup(TranslationHandler):
         """
 
         return "\n".join(
-            [self.handler_dict[s].to_hero(x[s]) for s in self.handler_dict])
+            [self.handler_dict[s].to_hero(x[s]) for s in self.handler_dict]
+        )
 
     def from_hero(self, x: typing.Dict[str, Any]) -> typing.Dict[str, Any]:
-        """Applies the constituent from_hero methods on the object X 
-           and builds a dictionary with keys corresponding to the constituent 
-           handlers applied."""
+        """Applies the constituent from_hero methods on the object X
+        and builds a dictionary with keys corresponding to the constituent
+        handlers applied."""
 
-        return {
-            h.to_string(): h.from_hero(x)
-            for h in self.handlers
-        }
+        return {h.to_string(): h.from_hero(x) for h in self.handlers}
 
     def from_universal(self, x: typing.Dict[str, Any]) -> typing.Dict[str, Any]:
-        """Performs the same operation as from_hero except with from_universal.
-        """
-        return {
-            h.to_string(): h.from_universal(x)
-            for h in self.handlers
-        }
+        """Performs the same operation as from_hero except with from_universal."""
+        return {h.to_string(): h.from_universal(x) for h in self.handlers}
 
     @property
     def handler_dict(self) -> typing.Dict[str, Handler]:
-        return {
-            h.to_string(): h for h in self.handlers
-        }
+        return {h.to_string(): h for h in self.handlers}

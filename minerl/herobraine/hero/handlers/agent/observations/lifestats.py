@@ -2,12 +2,15 @@
 # Author: William H. Guss, Brandon Houghton
 
 import jinja2
-from minerl.herobraine.hero.handlers.translation import KeymapTranslationHandler, TranslationHandlerGroup
+from minerl.herobraine.hero.handlers.translation import (
+    KeymapTranslationHandler,
+    TranslationHandlerGroup,
+)
 import minerl.herobraine.hero.mc as mc
 import minerl.herobraine.hero.spaces as spaces
 import numpy as np
 
-__all__ = ['ObservationFromLifeStats']
+__all__ = ["ObservationFromLifeStats"]
 
 
 class ObservationFromLifeStats(TranslationHandlerGroup):
@@ -40,14 +43,18 @@ class LifeStatsObservation(KeymapTranslationHandler):
     def __init__(self, hero_keys, univ_keys, space, default_if_missing=None):
         self.hero_keys = hero_keys
         self.univ_keys = univ_keys
-        super().__init__(hero_keys=hero_keys, univ_keys=['life_stats'] + univ_keys,
-                         space=space, default_if_missing=default_if_missing)
+        super().__init__(
+            hero_keys=hero_keys,
+            univ_keys=["life_stats"] + univ_keys,
+            space=space,
+            default_if_missing=default_if_missing,
+        )
 
     def xml_template(self) -> str:
         return str("""<ObservationFromFullStats/>""")
 
     def from_hero(self, hero_dict):
-        hero_dict = hero_dict['life_stats']
+        hero_dict = hero_dict["life_stats"]
         return super().from_hero(hero_dict)
 
 
@@ -57,10 +64,13 @@ class _IsAliveObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        keys = ['is_alive']
-        super().__init__(hero_keys=keys, univ_keys=keys,
-                         space=spaces.Box(low=0, high=1, shape=(), dtype=bool),
-                         default_if_missing=1)
+        keys = ["is_alive"]
+        super().__init__(
+            hero_keys=keys,
+            univ_keys=keys,
+            space=spaces.Box(low=0, high=1, shape=(), dtype=bool),
+            default_if_missing=1,
+        )
 
 
 class _LifeObservation(LifeStatsObservation):
@@ -69,10 +79,13 @@ class _LifeObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        keys = ['life']
-        super().__init__(hero_keys=keys, univ_keys=keys,
-                         space=spaces.Box(low=0, high=mc.MAX_LIFE, shape=(), dtype=float),
-                         default_if_missing=mc.MAX_LIFE)
+        keys = ["life"]
+        super().__init__(
+            hero_keys=keys,
+            univ_keys=keys,
+            space=spaces.Box(low=0, high=mc.MAX_LIFE, shape=(), dtype=float),
+            default_if_missing=mc.MAX_LIFE,
+        )
 
 
 class _ScoreObservation(LifeStatsObservation):
@@ -81,10 +94,13 @@ class _ScoreObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        keys = ['score']
-        super().__init__(univ_keys=keys, hero_keys=keys,
-                         space=spaces.Box(low=0, high=mc.MAX_SCORE, shape=(), dtype=int),
-                         default_if_missing=0)
+        keys = ["score"]
+        super().__init__(
+            univ_keys=keys,
+            hero_keys=keys,
+            space=spaces.Box(low=0, high=mc.MAX_SCORE, shape=(), dtype=int),
+            default_if_missing=0,
+        )
 
 
 class _FoodObservation(LifeStatsObservation):
@@ -94,9 +110,12 @@ class _FoodObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        super().__init__(hero_keys=['food'], univ_keys=['food'],
-                         space=spaces.Box(low=0, high=mc.MAX_FOOD, shape=(), dtype=int),
-                         default_if_missing=mc.MAX_FOOD)
+        super().__init__(
+            hero_keys=["food"],
+            univ_keys=["food"],
+            space=spaces.Box(low=0, high=mc.MAX_FOOD, shape=(), dtype=int),
+            default_if_missing=mc.MAX_FOOD,
+        )
 
 
 class _SaturationObservation(LifeStatsObservation):
@@ -107,9 +126,12 @@ class _SaturationObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        super().__init__(hero_keys=['saturation'], univ_keys=['saturation'],
-                         space=spaces.Box(low=0, high=mc.MAX_FOOD_SATURATION, shape=(),
-                                          dtype=float), default_if_missing=5.0)
+        super().__init__(
+            hero_keys=["saturation"],
+            univ_keys=["saturation"],
+            space=spaces.Box(low=0, high=mc.MAX_FOOD_SATURATION, shape=(), dtype=float),
+            default_if_missing=5.0,
+        )
 
 
 class _XPObservation(LifeStatsObservation):
@@ -119,20 +141,28 @@ class _XPObservation(LifeStatsObservation):
     """
 
     def __init__(self):
-        keys = ['xp']
-        super().__init__(hero_keys=keys, univ_keys=keys,
-                         space=spaces.Box(low=0, high=mc.MAX_XP, shape=(), dtype=int),
-                         default_if_missing=0)
+        keys = ["xp"]
+        super().__init__(
+            hero_keys=keys,
+            univ_keys=keys,
+            space=spaces.Box(low=0, high=mc.MAX_XP, shape=(), dtype=int),
+            default_if_missing=0,
+        )
 
 
 class _BreathObservation(LifeStatsObservation):
     """
-        Handles observation of breath which tracks the amount of air remaining before beginning to suffocate
+    Handles observation of breath which tracks the amount of air remaining before beginning to suffocate
     """
 
     def __init__(self):
-        super().__init__(hero_keys=['air'], univ_keys=['air'], space=spaces.Box(low=0, high=mc.MAX_BREATH, shape=(),
-                                                                                dtype=int), default_if_missing=300)
+        super().__init__(
+            hero_keys=["air"],
+            univ_keys=["air"],
+            space=spaces.Box(low=0, high=mc.MAX_BREATH, shape=(), dtype=int),
+            default_if_missing=300,
+        )
+
 
 # class DeathObservation(TranslationHandler):
 

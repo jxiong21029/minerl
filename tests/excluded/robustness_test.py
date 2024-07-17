@@ -25,7 +25,7 @@ def main():
     old_wait, old_timeout = minerl.env.core.MAX_WAIT, minerl.env.core.SOCKTIME
     minerl.env.core.MAX_WAIT, minerl.env.core.SOCKTIME = 1, 5.0
 
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
 
     for _ in range(NUM_EPISODES):
         obs = env.reset()
@@ -33,8 +33,7 @@ def main():
         while not done:
             random_act = env.action_space.sample()
 
-            obs, reward, done, info = env.step(
-                random_act)
+            obs, reward, done, info = env.step(random_act)
 
     minerl.env.core.MAX_WAIT, minerl.env.core.SOCKTIME = old_wait, old_timeout
 

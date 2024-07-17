@@ -5,6 +5,7 @@
 """
 Not very proud of the code reuse in this module -- @wguss
 """
+
 import json
 from typing import List
 
@@ -12,10 +13,13 @@ import jinja2
 
 from minerl.herobraine.hero.mc import EQUIPMENT_SLOTS
 from minerl.herobraine.hero import spaces
-from minerl.herobraine.hero.handlers.translation import TranslationHandler, TranslationHandlerGroup
+from minerl.herobraine.hero.handlers.translation import (
+    TranslationHandler,
+    TranslationHandlerGroup,
+)
 import numpy as np
 
-__all__ = ['EquippedItemObservation']
+__all__ = ["EquippedItemObservation"]
 
 
 class EquippedItemObservation(TranslationHandlerGroup):
@@ -29,16 +33,17 @@ class EquippedItemObservation(TranslationHandlerGroup):
         return "equipped_items"
 
     def xml_template(self) -> str:
-        return str(
-            """<ObservationFromEquippedItem/>""")
+        return str("""<ObservationFromEquippedItem/>""")
 
-    def __init__(self,
-                 items: List[str],
-                 mainhand: bool = True,
-                 offhand: bool = False,
-                 armor: bool = False,
-                 _default: str = 'none',
-                 _other: str = 'other'):
+    def __init__(
+        self,
+        items: List[str],
+        mainhand: bool = True,
+        offhand: bool = False,
+        armor: bool = False,
+        _default: str = "none",
+        _other: str = "other",
+    ):
         self.mainhand = mainhand
         self.offhand = offhand
         self.armor = armor
@@ -53,22 +58,34 @@ class EquippedItemObservation(TranslationHandlerGroup):
         handlers = []
         if mainhand:
             handlers.append(
-                _EquippedItemObservation(['mainhand'], self._items, _default=_default, _other=_other))
+                _EquippedItemObservation(
+                    ["mainhand"], self._items, _default=_default, _other=_other
+                )
+            )
         if offhand:
             handlers.append(
-                _EquippedItemObservation(['offhand'], self._items, _default=_default, _other=_other))
+                _EquippedItemObservation(
+                    ["offhand"], self._items, _default=_default, _other=_other
+                )
+            )
         if armor:
-            handlers.extend([
-                _EquippedItemObservation([slot], self._items, _default=_default, _other=_other) for slot in EQUIPMENT_SLOTS if slot not in ["mainhand", "offhand"]
-            ])
+            handlers.extend(
+                [
+                    _EquippedItemObservation(
+                        [slot], self._items, _default=_default, _other=_other
+                    )
+                    for slot in EQUIPMENT_SLOTS
+                    if slot not in ["mainhand", "offhand"]
+                ]
+            )
         super().__init__(handlers)
 
     def __eq__(self, other):
         return (
-                super().__eq__(other)
-                and other.mainhand == self.mainhand
-                and other.offhand == self.offhand
-                and other.armor == self.armor
+            super().__eq__(other)
+            and other.mainhand == self.mainhand
+            and other.offhand == self.offhand
+            and other.armor == self.armor
         )
 
     def __or__(self, other):
@@ -78,7 +95,7 @@ class EquippedItemObservation(TranslationHandlerGroup):
             offhand=self.offhand or other.offhand,
             armor=self.armor or other.armor,
             _other=self._other,
-            _default=self._default
+            _default=self._default,
         )
 
 
@@ -89,18 +106,16 @@ class _EquippedItemObservation(TranslationHandlerGroup):
     def to_string(self) -> str:
         return "_".join([str(k) for k in self.keys])
 
-    def __init__(self,
-                 dict_keys: List[str],
-                 items: List[str],
-                 _default,
-                 _other):
+    def __init__(self, dict_keys: List[str], items: List[str], _default, _other):
         self.keys = dict_keys
 
-        super().__init__(handlers=[
-            _TypeObservation(self.keys, items, _default=_default, _other=_other),
-            _DamageObservation(self.keys, type_str="damage"),
-            _DamageObservation(self.keys, type_str="maxDamage")
-        ])
+        super().__init__(
+            handlers=[
+                _TypeObservation(self.keys, items, _default=_default, _other=_other),
+                _DamageObservation(self.keys, type_str="damage"),
+                _DamageObservation(self.keys, type_str="maxDamage"),
+            ]
+        )
 
 
 class _TypeObservation(TranslationHandler):
@@ -117,7 +132,7 @@ class _TypeObservation(TranslationHandler):
         """
         self._items = sorted(items)
         self._keys = keys
-        self._univ_items = ['minecraft:' + item for item in items]
+        self._univ_items = ["minecraft:" + item for item in items]
         self._default = _default
         self._other = _other
         if _other not in self._items or _default not in self._items:
@@ -126,41 +141,45 @@ class _TypeObservation(TranslationHandler):
             print(_other)
         assert self._other in items
         assert self._default in items
-        super().__init__(
-            spaces.Enum(*self._items, default=self._default)
-        )
+        super().__init__(spaces.Enum(*self._items, default=self._default))
 
     def to_string(self):
-        return 'type'
+        return "type"
 
     def from_hero(self, obs_dict):
         try:
-            head = obs_dict['equipped_items']
+            head = obs_dict["equipped_items"]
             for key in self._keys:
                 head = json.loads(head[key])
-            item = head['type']
-            return (self._other if item not in self._items else item)
+            item = head["type"]
+            return self._other if item not in self._items else item
         except KeyError:
             return self._default
 
     def from_universal(self, obs):
         try:
-            if self._keys[0] == 'mainhand' and len(self._keys) == 1:
+            if self._keys[0] == "mainhand" and len(self._keys) == 1:
                 offset = -9
-                hotbar_index = obs['hotbar']
-                if obs['slots']['gui']['type'] == 'class net.minecraft.inventory.ContainerPlayer':
+                hotbar_index = obs["hotbar"]
+                if (
+                    obs["slots"]["gui"]["type"]
+                    == "class net.minecraft.inventory.ContainerPlayer"
+                ):
                     offset -= 1
 
-                item_name = (
-                    obs['slots']['gui']['slots'][offset + hotbar_index]['name'].split("minecraft:")[-1])
+                item_name = obs["slots"]["gui"]["slots"][offset + hotbar_index][
+                    "name"
+                ].split("minecraft:")[-1]
                 if not item_name in self._items:
                     raise ValueError()
-                if item_name == 'air':
+                if item_name == "air":
                     raise KeyError()
 
                 return item_name
             else:
-                raise NotImplementedError('type not implemented for hand type' + str(self._keys))
+                raise NotImplementedError(
+                    "type not implemented for hand type" + str(self._keys)
+                )
         except KeyError:
             # No item in hotbar slot - return 'none'
             # This looks wierd, but this will happen if the obs doesn't show up in the univ json.
@@ -170,14 +189,18 @@ class _TypeObservation(TranslationHandler):
 
     def __or__(self, other):
         """
-        Combines two TypeObservation's (self and other) into one by 
+        Combines two TypeObservation's (self and other) into one by
         taking the union of self.items and other.items
         """
         if isinstance(other, _TypeObservation):
-            return _TypeObservation(self._keys, list(set(self._items + other._items)),
-                                    _other=self._other, _default=self._default)
+            return _TypeObservation(
+                self._keys,
+                list(set(self._items + other._items)),
+                _other=self._other,
+                _default=self._default,
+            )
         else:
-            raise TypeError('Operands have to be of type TypeObservation')
+            raise TypeError("Operands have to be of type TypeObservation")
 
     def __eq__(self, other):
         return self._keys == other._keys and self._items == other._items
@@ -204,7 +227,7 @@ class _DamageObservation(TranslationHandler):
 
     def from_hero(self, info):
         try:
-            head = info['equipped_items']
+            head = info["equipped_items"]
             for key in self._keys:
                 head = json.loads(head[key])
             return np.array(head[self.type_str])
@@ -213,16 +236,28 @@ class _DamageObservation(TranslationHandler):
 
     def from_universal(self, obs):
         try:
-            if self._keys[0] == 'mainhand' and len(self._keys) == 1:
+            if self._keys[0] == "mainhand" and len(self._keys) == 1:
                 offset = -9
-                hotbar_index = obs['hotbar']
-                if obs['slots']['gui']['type'] == 'class net.minecraft.inventory.ContainerPlayer':
+                hotbar_index = obs["hotbar"]
+                if (
+                    obs["slots"]["gui"]["type"]
+                    == "class net.minecraft.inventory.ContainerPlayer"
+                ):
                     offset -= 1
-                return np.array(obs['slots']['gui']['slots'][offset + hotbar_index][self.type_str], dtype=np.int32)
+                return np.array(
+                    obs["slots"]["gui"]["slots"][offset + hotbar_index][self.type_str],
+                    dtype=np.int32,
+                )
             else:
-                raise NotImplementedError('damage not implemented for hand type' + str(self._keys))
+                raise NotImplementedError(
+                    "damage not implemented for hand type" + str(self._keys)
+                )
         except KeyError:
             return np.array(self._default, dtype=np.int32)
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and self._keys == other._keys and self.type_str == other.type_str
+        return (
+            isinstance(other, self.__class__)
+            and self._keys == other._keys
+            and self.type_str == other.type_str
+        )

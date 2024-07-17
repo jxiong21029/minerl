@@ -12,11 +12,10 @@ color = coloredlogs.install(level=logging.DEBUG)
 
 # Let's also test monitors
 
+
 class NavigateWithDistanceMonitor(Navigate):
     def create_monitors(self) -> List[TranslationHandler]:
-        return [
-            handlers.CompassObservation(angle=False, distance=True)
-        ]
+        return [handlers.CompassObservation(angle=False, distance=True)]
 
 
 def _test_fake_env(env_spec, should_render=False):
@@ -62,5 +61,7 @@ def test_fake_navigate_with_distance_monitor():
 
 if __name__ == "__main__":
     # _test_fake_env(Navigate(dense=True, extreme=False), should_render=True)
-    _test_fake_env(Navigate(dense=True, extreme=False, agent_count=3), should_render=True)
+    _test_fake_env(
+        Navigate(dense=True, extreme=False, agent_count=3), should_render=True
+    )
     # test_fake_navigate_with_distance_monitor()

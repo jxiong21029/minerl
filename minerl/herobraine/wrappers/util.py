@@ -17,8 +17,12 @@ def union_spaces(hdls_1: List[Handler], hdls_2: List[Handler]) -> List[MineRLSpa
     # Merge action/observation spaces from two environments
     hdls = hdls_1 + hdls_2
     hdl_dict = collections.defaultdict(list)
-    _ = [hdl_dict[hdl.to_string()].append(hdl) for hdl in hdls]  # Join matching handlers
-    merged_hdls = [reduce(lambda a, b: a | b, matching) for matching in hdl_dict.values()]
+    _ = [
+        hdl_dict[hdl.to_string()].append(hdl) for hdl in hdls
+    ]  # Join matching handlers
+    merged_hdls = [
+        reduce(lambda a, b: a | b, matching) for matching in hdl_dict.values()
+    ]
 
     return merged_hdls
 
@@ -27,8 +31,8 @@ def union_spaces(hdls_1: List[Handler], hdls_2: List[Handler]) -> List[MineRLSpa
 # TODO: Maybe this should be based on handlers as above.
 # E.g. 1. Intersect the handlers
 # E.g. 2. We then do best effort clipping for spaces space.intersect
-# wg note: whenever you write isinstance for a bunch of classes 
-# you are being a fucing idiot this is exactly why we have object 
+# wg note: whenever you write isinstance for a bunch of classes
+# you are being a fucing idiot this is exactly why we have object
 # oriented programming.
 def intersect_space(space, sample):
     if isinstance(space, Dict):
@@ -48,6 +52,6 @@ def intersect_space(space, sample):
 
 # TODO: make a test
 def flatten_spaces(hdls: List[Handler]) -> Tuple[list, List[Tuple[str, MineRLSpace]]]:
-    return [hdl.space.flattened for hdl in hdls if hdl.space.is_flattenable()], \
-           [(hdl.to_string(), hdl.space) for hdl in hdls if
-            not hdl.space.is_flattenable()]
+    return [hdl.space.flattened for hdl in hdls if hdl.space.is_flattenable()], [
+        (hdl.to_string(), hdl.space) for hdl in hdls if not hdl.space.is_flattenable()
+    ]

@@ -7,7 +7,7 @@ from minerl.herobraine.hero.handler import Handler
 
 
 class ServerQuitFromTimeUp(Handler):
-    """ Forces the server to quit after a certain time_limit_ms
+    """Forces the server to quit after a certain time_limit_ms
     also specifies a description parameter for the xml."""
 
     def to_string(self) -> str:
@@ -27,7 +27,7 @@ class ServerQuitFromTimeUp(Handler):
 
 
 class ServerQuitWhenAnyAgentFinishes(Handler):
-    """ Forces the server to quit if any of the agents involved quits.
+    """Forces the server to quit if any of the agents involved quits.
     Has no parameters."""
 
     def to_string(self) -> str:

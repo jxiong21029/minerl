@@ -24,7 +24,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
 
     actions = [env.action_space.sample() for _ in range(2000)]
     xposes = []
@@ -40,8 +40,7 @@ def main():
                 break
             random_act = env.action_space.noop()
 
-            obs, reward, done, info = env.step(
-                random_act)
+            obs, reward, done, info = env.step(random_act)
             # print(obs["compassAngle"])
             netr += reward
             # print(netr)

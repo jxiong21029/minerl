@@ -1,15 +1,15 @@
 # ------------------------------------------------------------------------------------------------
 # Copyright (c) 2018 Microsoft Corporation
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 # associated documentation files (the "Software"), to deal in the Software without restriction,
 # including without limitation the rights to use, copy, modify, merge, publish, distribute,
 # sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all copies or
 # substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
 # NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -38,7 +38,9 @@ def retry(func):
             try:
                 return func(*args, **kwargs)
             except Pyro4.errors.PyroError as e:
-                logger.error("An error occurred contacting the instance manager. Is it started!?")
+                logger.error(
+                    "An error occurred contacting the instance manager. Is it started!?"
+                )
                 raise e
             except (socket.timeout, socket.error, RuntimeError) as e:
                 if retry_exc is None:
@@ -55,7 +57,7 @@ def retry(func):
 
 def send_message(sock, data):
     length = len(data)
-    sock.sendall(struct.pack('!I', length))
+    sock.sendall(struct.pack("!I", length))
     sock.sendall(data)
 
 
@@ -63,12 +65,12 @@ def recv_message(sock):
     lengthbuf = recvall(sock, 4)
     if not lengthbuf:
         return None
-    length, = struct.unpack('!I', lengthbuf)
+    (length,) = struct.unpack("!I", lengthbuf)
     return recvall(sock, length)
 
 
 def recvall(sock, count):
-    buf = b''
+    buf = b""
     while count:
         newbuf = sock.recv(count)
         if not newbuf:

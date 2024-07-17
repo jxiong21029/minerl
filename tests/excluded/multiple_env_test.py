@@ -42,20 +42,22 @@ class MineRLRunner(threading.Thread):
             while not done:
                 random_act = env.action_space.noop()
 
-                random_act['camera'] = [0, 0.1 * obs["compassAngle"]]
-                random_act['back'] = 0
-                random_act['forward'] = 1
-                random_act['jump'] = 1
-                random_act['attack'] = 1
-                obs, reward, done, info = env.step(
-                    random_act)
+                random_act["camera"] = [0, 0.1 * obs["compassAngle"]]
+                random_act["back"] = 0
+                random_act["forward"] = 1
+                random_act["jump"] = 1
+                random_act["attack"] = 1
+                obs, reward, done, info = env.step(random_act)
                 netr += reward
         env.close()
-        print(f'{self.getName()} finished!')
+        print(f"{self.getName()} finished!")
 
 
 def test(create_synchronously=True):
-    threads = [MineRLRunner('MineRLNavigateDense-v0', create_synchronously) for _ in range(NUM_ENVS)]
+    threads = [
+        MineRLRunner("MineRLNavigateDense-v0", create_synchronously)
+        for _ in range(NUM_ENVS)
+    ]
     for t in threads:
         t.start()
     while any([t.is_alive() for t in threads]):

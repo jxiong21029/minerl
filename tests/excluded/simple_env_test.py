@@ -24,7 +24,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
 
     actions = [env.action_space.sample() for _ in range(2000)]
     xposes = []
@@ -36,13 +36,12 @@ def main():
         while not done:
             random_act = env.action_space.noop()
 
-            random_act['camera'] = [0, 0.1 * obs["compassAngle"]]
-            random_act['back'] = 0
-            random_act['forward'] = 1
-            random_act['jump'] = 1
-            random_act['attack'] = 1
-            obs, reward, done, info = env.step(
-                random_act)
+            random_act["camera"] = [0, 0.1 * obs["compassAngle"]]
+            random_act["back"] = 0
+            random_act["forward"] = 1
+            random_act["jump"] = 1
+            random_act["attack"] = 1
+            obs, reward, done, info = env.step(random_act)
             netr += reward
             print(reward, netr)
             env.render()

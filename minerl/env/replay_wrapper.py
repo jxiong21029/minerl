@@ -6,7 +6,6 @@ from minerl.herobraine.hero import mc, handlers
 from collections import defaultdict, deque
 
 
-
 class ReplayWrapper(gym.Wrapper):
     """
     Generic replay wrapper base class.
@@ -25,7 +24,7 @@ class ReplayWrapper(gym.Wrapper):
 
     :param replay_on_reset: whether the replay is implemented in reset() method, or
                             step-by-step (in step() method via overriding ac argument
-                    
+
 
     """
 
@@ -61,7 +60,6 @@ class ReplayWrapper(gym.Wrapper):
         next_action = self.actions[0] if len(self.actions) > 0 else None
         return replay_action, next_action
 
-
     def step(self, ac):
         ignore_ac = False
         if len(self.actions) > 0:
@@ -83,7 +81,9 @@ class ReplayWrapper(gym.Wrapper):
         else:
             raise ValueError("replay_file must be a string or a callable")
         with open(replay_file) as f:
-            self.actions = deque([json.loads(l) for l in f.readlines()][:self.max_steps])
+            self.actions = deque(
+                [json.loads(l) for l in f.readlines()][: self.max_steps]
+            )
 
     def is_on_trajectory(self, replay_action):
         """
@@ -120,12 +120,22 @@ class MinecraftReplayWrapper(ReplayWrapper):
                               during the replay.
     :param max_steps:         do not replay for more than this number of steps
     :param gui_camera_scaler: additional factor to multiply replay camera actions when gui is open.
-                              Useful when replaying data recorded with older (<=5.8) versions of 
+                              Useful when replaying data recorded with older (<=5.8) versions of
                               minerec recorder (should be set to 0.5)
     """
 
-    def __init__(self, env, replay_file, clip_stats=True, max_steps=None, gui_camera_scaler=1.0, replay_on_reset=False):
-        super().__init__(env, replay_file, max_steps=max_steps, replay_on_reset=replay_on_reset)
+    def __init__(
+        self,
+        env,
+        replay_file,
+        clip_stats=True,
+        max_steps=None,
+        gui_camera_scaler=1.0,
+        replay_on_reset=False,
+    ):
+        super().__init__(
+            env, replay_file, max_steps=max_steps, replay_on_reset=replay_on_reset
+        )
         self.last_info = None
         self.last_ob = None
         self.clip_stats = clip_stats
@@ -147,7 +157,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
         :param replay_action: current action to be replayed. Assumed to be a dict,
                               with xpos, ypos, zpos, and inventory, that are utilized
                               to compare agent location and inventory to the one reported by env
-                            
+
         """
         if self.last_info is None or self.last_ob is None:
             return True
@@ -188,12 +198,13 @@ class MinecraftReplayWrapper(ReplayWrapper):
                 f"Tick {tick1}: Coords mismatch: is {x}, {y}, {z}, {yaw}, {pitch}, should be {x1}, {y1}, {z1}, {yaw1}, {pitch1}"
             )
             self.mismatched_ticks += 1
-        elif "inventory" in replay_action and \
-          not inventory_matches(ob["inventory"], replay_action["inventory"]):
+        elif "inventory" in replay_action and not inventory_matches(
+            ob["inventory"], replay_action["inventory"]
+        ):
             print(f"Tick {tick1}: Inventory mismatch")
             self.mismatched_ticks += 1
         else:
-            self.mismatched_ticks = 0   
+            self.mismatched_ticks = 0
         return self.mismatched_ticks < self.max_mismatched_ticks
 
     def replay2env(self, replay_action, next_action):
@@ -203,7 +214,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
             replay_action,
             next_action=next_action,
             gui_camera_scaler=self.gui_camera_scaler,
-            esc_to_inventory=False
+            esc_to_inventory=False,
         )
         if self.multiagent:
             ac = {"agent_0": ac}
@@ -244,6 +255,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
 
     def _patch_agent_start(self):
         old_create_agent_start = self.task.create_agent_start
+
         def create_agent_start():
             h = old_create_agent_start()
             start_pos = self._get_start_pos()
@@ -253,6 +265,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
             if start_velocity is not None:
                 h.append(handlers.AgentStartVelocity(*start_velocity))
             return h
+
         self.task.create_agent_start = create_agent_start
 
     def _get_start_pos(self):
@@ -260,6 +273,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
             return None
         a = self.actions[0]
         return a["xpos"], a["ypos"], a["zpos"], a["yaw"], a["pitch"]
+
     def _get_start_velocity(self):
         if len(self.actions) < 2:
             return None
@@ -272,15 +286,17 @@ class MinecraftReplayWrapper(ReplayWrapper):
     def extra_steps_on_reset(self, ob):
         # make sure agent is sprinting if it was sprinting at the replay boundary
         for i in range(len(self.actions) - 1):
-            a, na = self.actions[i], self.actions[i+1]
-            sprint_stat = 'minecraft.custom:minecraft.sprint_one_cm'
-            if na.get("stats", {}).get(sprint_stat, 0) <= a.get("stats", {}).get(sprint_stat, 0):
+            a, na = self.actions[i], self.actions[i + 1]
+            sprint_stat = "minecraft.custom:minecraft.sprint_one_cm"
+            if na.get("stats", {}).get(sprint_stat, 0) <= a.get("stats", {}).get(
+                sprint_stat, 0
+            ):
                 break
             a["keyboard"]["keys"].append("key.keyboard.left.control")
         # TODO implement boat / horse activation
         replay_action = self.actions[0]
-        if replay_action.get('isGuiOpen', False):
-            # this clause accounts for situation when gui is open at the beginning 
+        if replay_action.get("isGuiOpen", False):
+            # this clause accounts for situation when gui is open at the beginning
             # of the episode. Saves files do not store gui state; which means when
             # a save file is loaded player / agent is always outside of gui. However,
             # minerec cuts trajectories into 5 minute chunks, and the chunk boundary
@@ -290,7 +306,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
             self.env.step(self.env.action_space.no_op())
             ac = self.env.action_space.no_op()
             # Open inventory or gui ...
-            ac['inventory' if replay_action.get('isGuiInventory') else 'use'] = 1
+            ac["inventory" if replay_action.get("isGuiInventory") else "use"] = 1
             self.env.step(ac)
             # extra steps are needed because crafting table gui does not open
             # immediately on "use" action (only after hand swing is rendered)
@@ -308,8 +324,7 @@ class MinecraftReplayWrapper(ReplayWrapper):
             ac["camera"] = mc.mouse_to_camera({"dx": dx, "dy": dy})
             ob, _, _, _ = self.env.step(ac)
         return ob
-            
-            
+
 
 def subtract_stats(ob, base_ob):
     """
@@ -337,6 +352,8 @@ def inventory_matches(inv_ob, inv_json):
         inv_dict[itemstack["type"]] += itemstack["quantity"]
     for item, quantity in inv_dict.items():
         if int(inv_ob[item]) != quantity:
-            print(f"Inventory mismatch! Item {item}: agent has {inv_ob[item]}, should have {quantity}")
+            print(
+                f"Inventory mismatch! Item {item}: agent has {inv_ob[item]}, should have {quantity}"
+            )
             return False
     return True

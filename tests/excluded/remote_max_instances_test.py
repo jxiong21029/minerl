@@ -21,9 +21,9 @@ def main():
     Tests running a simple environment.
     """
     #    InstanceManager.MAXINSTANCES = 1
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
     try:
-        gym.make('MineRLObtainDiamondDense-v0')
+        gym.make("MineRLObtainDiamondDense-v0")
         assert False, "Did not throw an exception."
     except RuntimeError:
         pass

@@ -2,6 +2,7 @@
 # Author: William H. Guss, Brandon Houghton
 
 """Defines the agent start conditions"""
+
 from minerl.herobraine.hero.handler import Handler
 from typing import Dict, List, Union
 import random
@@ -58,11 +59,12 @@ class InventoryAgentStart(Handler):
 
 
 class SimpleInventoryAgentStart(InventoryAgentStart):
-    """ An inventory agentstart specification which
+    """An inventory agentstart specification which
     just fills the inventory of the agent sequentially.
     """
-    def __init__(self, inventory : List[Dict[str, Union[str, int]]]):
-        """ Creates a simple inventory agent start.
+
+    def __init__(self, inventory: List[Dict[str, Union[str, int]]]):
+        """Creates a simple inventory agent start.
 
         For example:
 
@@ -75,17 +77,16 @@ class SimpleInventoryAgentStart(InventoryAgentStart):
                 ]
             )
         """
-        super().__init__({
-            i: item for i, item in enumerate(inventory)
-        })
+        super().__init__({i: item for i, item in enumerate(inventory)})
 
 
 class RandomInventoryAgentStart(InventoryAgentStart):
-    """ An inventory agentstart specification which
+    """An inventory agentstart specification which
     that fills
     """
+
     def __init__(self, inventory: Dict[str, Union[str, int]], use_hotbar: bool = False):
-        """ Creates an inventory where items are placed in random positions
+        """Creates an inventory where items are placed in random positions
 
         For example:
 
@@ -95,12 +96,14 @@ class RandomInventoryAgentStart(InventoryAgentStart):
         self.slot_range = (0, 36) if use_hotbar else (10, 36)
 
     def xml_template(self) -> str:
-        lines = ['<Inventory>']
+        lines = ["<Inventory>"]
         for item, quantity in self.inventory.items():
             slot = random.randint(*self.slot_range)
-            lines.append(f'<InventoryObject slot="{slot}" type="{item}" quantity="{quantity}"/>')
-        lines.append('</Inventory>')
-        return '\n'.join(lines)
+            lines.append(
+                f'<InventoryObject slot="{slot}" type="{item}" quantity="{quantity}"/>'
+            )
+        lines.append("</Inventory>")
+        return "\n".join(lines)
 
 
 class AgentStartBreakSpeedMultiplier(Handler):
@@ -108,9 +111,7 @@ class AgentStartBreakSpeedMultiplier(Handler):
         return f"agent_start_break_speed_multiplier({self.multiplier})"
 
     def xml_template(self) -> str:
-        return str(
-            """<BreakSpeedMultiplier>{{multiplier}}</BreakSpeedMultiplier>"""
-        )
+        return str("""<BreakSpeedMultiplier>{{multiplier}}</BreakSpeedMultiplier>""")
 
     def __init__(self, multiplier=1.0):
         self.multiplier = multiplier
@@ -132,14 +133,13 @@ class AgentStartPlacement(Handler):
         self.yaw = yaw
         self.pitch = pitch
 
+
 class AgentStartVelocity(Handler):
     def to_string(self) -> str:
         return f"agent_start_velocity({self.x}, {self.y}, {self.z})"
 
     def xml_template(self) -> str:
-        return str(
-            """<Velocity x="{{x}}" y="{{y}}" z="{{z}}"/>"""
-        )
+        return str("""<Velocity x="{{x}}" y="{{y}}" z="{{z}}"/>""")
 
     def __init__(self, x, y, z):
         self.x = x
@@ -159,9 +159,16 @@ class AgentStartNear(Handler):
                     <MinDistance>{{min_distance}}</MinDistance>
                     <MaxVertDistance>{{max_vert_distance}}</MaxVertDistance>
                     <LookingAt>true</LookingAt>
-               </NearPlayer>""")
+               </NearPlayer>"""
+        )
 
-    def __init__(self, anchor_name="MineRLAgent0", min_distance=2, max_distance=10, max_vert_distance=3):
+    def __init__(
+        self,
+        anchor_name="MineRLAgent0",
+        min_distance=2,
+        max_distance=10,
+        max_vert_distance=3,
+    ):
         self.anchor_name = anchor_name
         self.min_distance = min_distance
         self.max_distance = max_distance
@@ -174,9 +181,7 @@ class StartingHealthAgentStart(Handler):
 
     def xml_template(self) -> str:
         if self.health is None:
-            return str(
-                """<StartingHealth maxHealth="{{ max_health }}"/>"""
-            )
+            return str("""<StartingHealth maxHealth="{{ max_health }}"/>""")
         else:
             return str(
                 """<StartingHealth maxHealth="{{ max_health }}" health="{{ health }}"/>"""
@@ -203,9 +208,7 @@ class StartingFoodAgentStart(Handler):
 
     def xml_template(self) -> str:
         if self.food_saturation is None:
-            return str(
-                """<StartingFood food="{{ food }}"/>"""
-            )
+            return str("""<StartingFood food="{{ food }}"/>""")
         else:
             return str(
                 """<StartingHealth food="{{ food }}" foodSaturation="{{ food_saturation }}"/>"""
@@ -232,6 +235,7 @@ class LowLevelInputsAgentStart(Handler):
 
     def xml_template(self) -> str:
         return "<LowLevelInputs>true</LowLevelInputs>"
+
 
 class GuiScale(Handler):
     def __init__(self, gui_scale=2):
@@ -265,6 +269,7 @@ class FOVSetting(Handler):
     def xml_template(self) -> str:
         return "<FOVSetting>{{fov_setting}}</FOVSetting>"
 
+
 class FakeCursorSize(Handler):
     def __init__(self, size=16):
         self.size = size
@@ -274,6 +279,7 @@ class FakeCursorSize(Handler):
 
     def xml_template(self) -> str:
         return "<FakeCursorSize>{{size}}</FakeCursorSize>"
+
 
 class LoadWorldAgentStart(Handler):
     def __init__(self, filename):
@@ -292,11 +298,14 @@ class LoadWorldAgentStart(Handler):
             return f"<LoadWorldFile>{_filename}</LoadWorldFile>"
         return ""
 
+
 class PreferredSpawnBiome(Handler):
     def __init__(self, biome):
         self.biome = biome
+
     def to_string(self):
         return "preferred_spawn_biome"
+
     def xml_template(self) -> str:
         _biome = None
         if callable(self.biome):
@@ -307,11 +316,14 @@ class PreferredSpawnBiome(Handler):
             return f"<PreferredSpawnBiome>{_biome}</PreferredSpawnBiome>"
         return ""
 
+
 class EnableRecorder(Handler):
     def to_string(self) -> str:
         return "enable_recorder"
+
     def xml_template(self) -> str:
         return "<EnableRecorder>true</EnableRecorder>"
+
 
 class MultiplayerUsername(Handler):
     def __init__(self, name: str):
@@ -323,15 +335,20 @@ class MultiplayerUsername(Handler):
     def xml_template(self) -> str:
         return "<MultiplayerUsername>{{ name }}</MultiplayerUsername>"
 
+
 class SpawnInVillage(Handler):
     def to_string(self):
         return "start_in_village"
+
     def xml_template(self) -> str:
         return "<SpawnInVillage>true</SpawnInVillage>"
 
+
 class DoneOnDeath(Handler):
     """This should probably be in quit.py etc, but those are not implemented in Java side yet"""
+
     def to_string(self):
         return "done_on_death"
+
     def xml_template(self) -> str:
         return "<DoneOnDeath>true</DoneOnDeath>"

@@ -11,14 +11,10 @@ class TestSpec(EnvSpec):
         self.items = items
 
     def create_actionables(self):
-        return [
-            handlers.CraftItem(self.items)
-        ]
+        return [handlers.CraftItem(self.items)]
 
     def create_observables(self):
-        return [
-            handlers.POVObservation(self.resolution)
-        ]
+        return [handlers.POVObservation(self.resolution)]
         # todo
 
     def get_docstring(self):
@@ -32,6 +28,7 @@ class TestSpec(EnvSpec):
 
     def determine_success_from_rewards(self):
         pass
+
 
 # def test_to_xml():
 #     """

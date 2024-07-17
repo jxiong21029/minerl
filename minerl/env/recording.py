@@ -61,9 +61,9 @@
 #         return next_state, reward, done, info
 
 #     def save_recording(self):
-#         assert len(self.rewards) > 0    
+#         assert len(self.rewards) > 0
 #         env_rec_dir = os.path.join(MINERL_RECORDING_PATH, self.spec.id)
-#         episode_dir = J(env_rec_dir, 
+#         episode_dir = J(env_rec_dir,
 #             "ep_{}".format(self.num_resets))
 
 #         if not E(episode_dir): os.makedirs(episode_dir)

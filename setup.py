@@ -25,19 +25,20 @@ with open("requirements.txt", "r") as fh:
 
 MALMO_BRANCH = "minerl"
 MALMO_VERSION = "0.37.0"
-MALMO_DIR = os.path.join(os.path.dirname(__file__), 'minerl', 'Malmo')
+MALMO_DIR = os.path.join(os.path.dirname(__file__), "minerl", "Malmo")
 BINARIES_IGNORE = shutil.ignore_patterns(
-    'build',
-    'bin',
-    'dists',
-    'caches',
-    'native',
-    '.git',
-    'doc',
-    '*.lock',
-    '.gradle',
-    '.minecraftserver',
-    '.minecraft')
+    "build",
+    "bin",
+    "dists",
+    "caches",
+    "native",
+    ".git",
+    "doc",
+    "*.lock",
+    ".gradle",
+    ".minecraftserver",
+    ".minecraft",
+)
 # TODO: THIS IS NOT ACTUALLY IGNORING THE GRADLE.
 
 # TODO: Potentially add locks to the binary ignores.
@@ -45,7 +46,6 @@ BINARIES_IGNORE = shutil.ignore_patterns(
 
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
-
 
     # @minecraft_build
     class bdist_wheel(_bdist_wheel):
@@ -70,23 +70,36 @@ class BinaryDistribution(Distribution):
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 def unpack_assets():
-    asset_dir = os.path.join(os.path.expanduser('~'), '.gradle', 'caches', 'forge_gradle', 'assets')
-    output_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'minerl', 'MCP-Reborn', 'src', 'main', 'resources')
-    index = load_asset_index(os.path.join(asset_dir, 'indexes', '1.16.json'))
+    asset_dir = os.path.join(
+        os.path.expanduser("~"), ".gradle", "caches", "forge_gradle", "assets"
+    )
+    output_dir = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)),
+        "minerl",
+        "MCP-Reborn",
+        "src",
+        "main",
+        "resources",
+    )
+    index = load_asset_index(os.path.join(asset_dir, "indexes", "1.16.json"))
     unpack_assets_impl(index, asset_dir, output_dir)
+
 
 def load_asset_index(index_file):
     with open(index_file) as f:
         return json.load(f)
 
+
 def unpack_assets_impl(index, asset_dir, output_dir):
-    for k, v in index['objects'].items():
+    for k, v in index["objects"].items():
         asset_hash = v["hash"]
-        src = os.path.join(asset_dir, 'objects', asset_hash[:2], asset_hash)
+        src = os.path.join(asset_dir, "objects", asset_hash[:2], asset_hash)
         dst = os.path.join(output_dir, k)
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         shutil.copy(src, dst)
+
 
 class InstallPlatlib(install):
     def finalize_options(self):
@@ -103,6 +116,7 @@ class InstallWithMinecraftLib(install_lib):
 
     def build(self):
         super().build()
+
 
 class CustomBuild(build):
     def run(self):
@@ -121,19 +135,22 @@ class ShadowInplace(Command):
     def run(self):
         pass
 
+
 def prep_mcp():
     mydir = os.path.abspath(os.path.dirname(__file__))
 
     # First, get MCP and patch it with our source.
-    if os.name == 'nt':
+    if os.name == "nt":
         # Windows is picky about this, too... If you have WSL, you have
         # bash command, but an absolute path won't work. So lets instead
         # use relative paths
         old_dir = os.getcwd()
-        os.chdir(os.path.join(mydir, 'scripts'))
+        os.chdir(os.path.join(mydir, "scripts"))
 
         try:
-            setup_output = subprocess.check_output(['bash.exe', 'setup_mcp.sh']).decode(errors="ignore")
+            setup_output = subprocess.check_output(["bash.exe", "setup_mcp.sh"]).decode(
+                errors="ignore"
+            )
             if "ERROR: JAVA_HOME" in setup_output:
                 raise RuntimeError(
                     """
@@ -151,7 +168,7 @@ def prep_mcp():
                     should also work.
                     """
                 )
-            subprocess.check_call(['bash.exe', 'patch_mcp.sh'])
+            subprocess.check_call(["bash.exe", "patch_mcp.sh"])
         except subprocess.CalledProcessError as e:
             raise RuntimeError(
                 """
@@ -172,22 +189,24 @@ def prep_mcp():
 
         os.chdir(old_dir)
     else:
-        subprocess.check_call(['bash', os.path.join(mydir, 'scripts', 'setup_mcp.sh')])
-        subprocess.check_call(['bash', os.path.join(mydir, 'scripts', 'patch_mcp.sh')])
+        subprocess.check_call(["bash", os.path.join(mydir, "scripts", "setup_mcp.sh")])
+        subprocess.check_call(["bash", os.path.join(mydir, "scripts", "patch_mcp.sh")])
 
     # Next, move onto building the MCP source
-    gradlew = 'gradlew.bat' if os.name == 'nt' else './gradlew'
-    workdir = os.path.join(mydir, 'minerl', 'MCP-Reborn')
-    if os.name == 'nt':
+    gradlew = "gradlew.bat" if os.name == "nt" else "./gradlew"
+    workdir = os.path.join(mydir, "minerl", "MCP-Reborn")
+    if os.name == "nt":
         # Windows is picky about being in the right directory to run gradle
         old_dir = os.getcwd()
         os.chdir(workdir)
-    
+
     # This may fail on the first try. Try few times
     n_trials = 3
     for i in range(n_trials):
         try:
-            subprocess.check_call('{} downloadAssets'.format(gradlew).split(' '), cwd=workdir)
+            subprocess.check_call(
+                "{} downloadAssets".format(gradlew).split(" "), cwd=workdir
+            )
         except subprocess.CalledProcessError as e:
             if i == n_trials - 1:
                 raise e
@@ -195,9 +214,12 @@ def prep_mcp():
             break
 
     unpack_assets()
-    subprocess.check_call('{} clean build shadowJar'.format(gradlew).split(' '), cwd=workdir)
-    if os.name == 'nt':
+    subprocess.check_call(
+        "{} clean build shadowJar".format(gradlew).split(" "), cwd=workdir
+    )
+    if os.name == "nt":
         os.chdir(old_dir)
+
 
 # Don't build binaries (requires Java) on readthedocs.io server.
 if os.environ.get("READTHEDOCS"):
@@ -205,25 +227,25 @@ if os.environ.get("READTHEDOCS"):
     cmdclass = {}
 else:
     cmdclass = {
-        'bdist_wheel': bdist_wheel,
-        'install': InstallPlatlib,
-        'install_lib': InstallWithMinecraftLib,
-        'build_malmo': CustomBuild,
-        'shadow_develop': ShadowInplace,
+        "bdist_wheel": bdist_wheel,
+        "install": InstallPlatlib,
+        "install_lib": InstallWithMinecraftLib,
+        "build_malmo": CustomBuild,
+        "shadow_develop": ShadowInplace,
     }
     prep_mcp()
 
 setuptools.setup(
-    name='minerl',
-    version=os.environ.get('MINERL_BUILD_VERSION', '1.0.0'),
-    description='MineRL environment and data loader for reinforcement learning from human demonstration in Minecraft',
+    name="minerl",
+    version=os.environ.get("MINERL_BUILD_VERSION", "1.0.0"),
+    description="MineRL environment and data loader for reinforcement learning from human demonstration in Minecraft",
     long_description=markdown,
     long_description_content_type="text/markdown",
-    url='http://github.com/minerllabs/minerl',
-    author='MineRL Labs',
-    author_email='minerl@andrew.cmu.edu',
-    license='MIT',
-    packages=setuptools.find_packages(exclude=['tests', 'tests.*']),
+    url="http://github.com/minerllabs/minerl",
+    author="MineRL Labs",
+    author_email="minerl@andrew.cmu.edu",
+    license="MIT",
+    packages=setuptools.find_packages(exclude=["tests", "tests.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",

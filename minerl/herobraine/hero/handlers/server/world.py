@@ -64,10 +64,9 @@ class FlatWorldGenerator(Handler):
             """
         )
 
-    def __init__(self, force_reset: bool = True, generatorString: str =""):
+    def __init__(self, force_reset: bool = True, generatorString: str = ""):
         self.force_reset = force_reset
         self.generatorString = generatorString
-
 
 
 #  <BiomeGenerator forceReset="true" biome="3"/>
@@ -98,6 +97,7 @@ class DrawingDecorator(Handler):
 
     def to_string(self) -> str:
         return "drawing_decorator"
+
 
 class RemoteServer(Handler):
     def __init__(self, address: str):

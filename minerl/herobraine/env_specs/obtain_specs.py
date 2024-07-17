@@ -10,8 +10,28 @@ from typing import List
 
 TIMEOUT = 18000
 DIAMOND_ITEMS = [
-    [["acacia_log", "birch_log", "dark_oak_log", "jungle_log", "oak_log", "spruce_log"], 1],
-    [["acacia_planks", "birch_planks", "dark_oak_planks", "jungle_planks", "oak_planks", "spruce_planks"], 2],
+    [
+        [
+            "acacia_log",
+            "birch_log",
+            "dark_oak_log",
+            "jungle_log",
+            "oak_log",
+            "spruce_log",
+        ],
+        1,
+    ],
+    [
+        [
+            "acacia_planks",
+            "birch_planks",
+            "dark_oak_planks",
+            "jungle_planks",
+            "oak_planks",
+            "spruce_planks",
+        ],
+        2,
+    ],
     [["stick"], 4],
     [["crafting_table"], 4],
     [["wooden_pickaxe"], 8],
@@ -22,7 +42,7 @@ DIAMOND_ITEMS = [
     [["iron_ingot"], 128],
     [["iron_pickaxe"], 256],
     [["diamond"], 1024],
-    [["diamond_shovel"], 2048]
+    [["diamond_shovel"], 2048],
 ]
 
 
@@ -43,7 +63,9 @@ class ObtainDiamondShovelWrapper(gym.Wrapper):
             if not self.seen[i]:
                 for item in item_list:
                     if observation["inventory"][item] > 0:
-                        if i == len(self.rewarded_items) - 1:  # achieved last item in rewarded item list
+                        if (
+                            i == len(self.rewarded_items) - 1
+                        ):  # achieved last item in rewarded item list
                             done = True
                         reward += rew
                         self.seen[i] = 1
@@ -71,32 +93,37 @@ def _obtain_diamond_shovel_gym_entrypoint(env_spec, fake=False):
     env = ObtainDiamondShovelWrapper(env)
     return env
 
-OBTAIN_DIAMOND_SHOVEL_ENTRY_POINT = "minerl.herobraine.env_specs.obtain_specs:_obtain_diamond_shovel_gym_entrypoint"
+
+OBTAIN_DIAMOND_SHOVEL_ENTRY_POINT = (
+    "minerl.herobraine.env_specs.obtain_specs:_obtain_diamond_shovel_gym_entrypoint"
+)
+
 
 class ObtainDiamondShovelEnvSpec(HumanSurvival):
     r"""
-In this environment the agent is required to obtain a diamond shovel.
-The agent begins in a random starting location on a random survival map
-without any items, matching the normal starting conditions for human players in Minecraft.
+    In this environment the agent is required to obtain a diamond shovel.
+    The agent begins in a random starting location on a random survival map
+    without any items, matching the normal starting conditions for human players in Minecraft.
 
-During an episode the agent is rewarded according to the requisite item
-hierarchy needed to obtain a diamond shovel. The rewards for each item are
-given here::
+    During an episode the agent is rewarded according to the requisite item
+    hierarchy needed to obtain a diamond shovel. The rewards for each item are
+    given here::
 
-    <Item reward="1" type="log" />
-    <Item reward="2" type="planks" />
-    <Item reward="4" type="stick" />
-    <Item reward="4" type="crafting_table" />
-    <Item reward="8" type="wooden_pickaxe" />
-    <Item reward="16" type="cobblestone" />
-    <Item reward="32" type="furnace" />
-    <Item reward="32" type="stone_pickaxe" />
-    <Item reward="64" type="iron_ore" />
-    <Item reward="128" type="iron_ingot" />
-    <Item reward="256" type="iron_pickaxe" />
-    <Item reward="1024" type="diamond" />
-    <Item reward="2048" type="diamond_shovel" />
-"""
+        <Item reward="1" type="log" />
+        <Item reward="2" type="planks" />
+        <Item reward="4" type="stick" />
+        <Item reward="4" type="crafting_table" />
+        <Item reward="8" type="wooden_pickaxe" />
+        <Item reward="16" type="cobblestone" />
+        <Item reward="32" type="furnace" />
+        <Item reward="32" type="stone_pickaxe" />
+        <Item reward="64" type="iron_ore" />
+        <Item reward="128" type="iron_ingot" />
+        <Item reward="256" type="iron_pickaxe" />
+        <Item reward="1024" type="diamond" />
+        <Item reward="2048" type="diamond_shovel" />
+    """
+
     def __init__(self):
         super().__init__(
             name="MineRLObtainDiamondShovel-v0",
@@ -106,7 +133,7 @@ given here::
             resolution=[640, 360],
             gamma_range=[2, 2],
             guiscale_range=[1, 1],
-            cursor_size_range=[16.0, 16.0]
+            cursor_size_range=[16.0, 16.0],
         )
 
     def _entry_point(self, fake: bool) -> str:
@@ -115,10 +142,8 @@ given here::
     def create_observables(self) -> List[Handler]:
         return [
             handlers.POVObservation(self.resolution),
-            handlers.FlatInventoryObservation(ALL_ITEMS)
+            handlers.FlatInventoryObservation(ALL_ITEMS),
         ]
 
     def create_monitors(self) -> List[TranslationHandler]:
         return []
-
-

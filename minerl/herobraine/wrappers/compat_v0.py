@@ -25,7 +25,7 @@ from minerl.herobraine.wrappers.wrapper import EnvWrapper
 #             pass
 
 
-def flatten(d, parent_key='', sep='.'):
+def flatten(d, parent_key="", sep="."):
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
@@ -42,26 +42,26 @@ class Compat_v0(EnvWrapper):
 
     def _wrap_observation(self, obs: OrderedDict) -> OrderedDict:
         for key, hdl in obs:
-            if '.' in key:
-                obs['key'] = flatten(obs['key'])
+            if "." in key:
+                obs["key"] = flatten(obs["key"])
         return obs
 
     def _wrap_action(self, act: OrderedDict) -> OrderedDict:
         for key, hdl in act:
-            if '.' in key:
-                act['key'] = flatten(act['key'])
+            if "." in key:
+                act["key"] = flatten(act["key"])
         return act
 
     def _unwrap_observation(self, obs: OrderedDict) -> OrderedDict:
         for key, hdl in obs:
-            if '.' in key:
-                obs['key'] = flatten(obs['key'])
+            if "." in key:
+                obs["key"] = flatten(obs["key"])
         return obs
 
     def _unwrap_action(self, act: OrderedDict) -> OrderedDict:
         for key, hdl in act:
-            if '.' in key:
-                act['key'] = flatten(act['key'])
+            if "." in key:
+                act["key"] = flatten(act["key"])
         return act
 
     def __init__(self, env_to_wrap: EnvSpec, name: str):

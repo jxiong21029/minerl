@@ -46,14 +46,17 @@ class Action(TranslationHandler):
             adjective = " ".join([str(y) for y in x])
         else:
             adjective = str(x)
-        cmd += "{} {}".format(
-            verb, adjective)
+        cmd += "{} {}".format(verb, adjective)
 
         return cmd
 
     def __or__(self, other):
         if not self.command == other.command:
-            raise ValueError("Command must be the same between {} and {}".format(self.command, other.command))
+            raise ValueError(
+                "Command must be the same between {} and {}".format(
+                    self.command, other.command
+                )
+            )
 
         return self
 
@@ -70,7 +73,7 @@ class ItemListAction(Action):
     def xml_template(self) -> str:
         pass
 
-    def __init__(self, command: str, items: list, _default='none', _other='other'):
+    def __init__(self, command: str, items: list, _default="none", _other="other"):
         """
         Initializes the space of the handler with a gym.spaces.Dict
         of all of the spaces for each individual command.
@@ -79,7 +82,7 @@ class ItemListAction(Action):
         # TODO must check that the first element is 'none' and last elem is 'other'
         self._command = command
         self._items = items
-        self._univ_items = ['minecraft:' + item for item in items]
+        self._univ_items = ["minecraft:" + item for item in items]
         if _other not in self._items or _default not in self._items:
             print(self._items)
             print(_default)
@@ -89,8 +92,8 @@ class ItemListAction(Action):
         self._default = _default
         self._other = _other
         super().__init__(
-            self._command,
-            spaces.Enum(*self._items, default=self._default))
+            self._command, spaces.Enum(*self._items, default=self._default)
+        )
 
     @property
     def items(self):

@@ -15,24 +15,24 @@ class _SingleAgentEnv(_MultiAgentEnv):
 
     def __init__(self, *args, **kwargs):
         super(_SingleAgentEnv, self).__init__(*args, **kwargs)
-        assert self.task.agent_count == 1, (
-            "Using the minerl.env._SingleAgentEnv when multiple agents are specified. Error.")
+        assert (
+            self.task.agent_count == 1
+        ), "Using the minerl.env._SingleAgentEnv when multiple agents are specified. Error."
 
     def reset(self) -> Dict[str, Any]:
         multi_obs = super().reset()
         return multi_obs[self.task.agent_names[0]]
 
-    def step(self, single_agent_action: Dict[str, Any]) -> Tuple[
-        Dict[str, Any], float, bool, Dict[str, Any]]:
+    def step(
+        self, single_agent_action: Dict[str, Any]
+    ) -> Tuple[Dict[str, Any], float, bool, Dict[str, Any]]:
         aname = self.task.agent_names[0]
-        multi_agent_action = {
-            aname: single_agent_action
-        }
+        multi_agent_action = {aname: single_agent_action}
         obs, rew, done, info = super().step(multi_agent_action)
 
         return obs[aname], rew[aname], done, info[aname]
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
         return super().render(mode)[self.task.agent_names[0]]
 
     def _check_action(self, actor_name, action, env_spec):

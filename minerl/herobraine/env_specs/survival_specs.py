@@ -29,18 +29,18 @@ Currently the agent has access to the cheating smelting command but this will be
 This environment most closely represents the open-world objective of vanilla Minecraft, except the episode ends on death
 """
 MS_PER_STEP = 50
-NONE = 'none'
-OTHER = 'other'
+NONE = "none"
+OTHER = "other"
 
 
 class Survival(SimpleEmbodimentEnvSpec):
     def __init__(self, *args, **kwargs):
-        if 'name' not in kwargs:
-            kwargs['name'] = 'MineRLSurvival-v0'
+        if "name" not in kwargs:
+            kwargs["name"] = "MineRLSurvival-v0"
         # TODO determine if we actually need to limit episode steps
-        if 'max_episode_steps' not in kwargs:
-            kwargs['max_episode_steps'] = 24 * 60 * 60 * 20  # 24 hours * 20hz
-        self.episode_len = kwargs['max_episode_steps']
+        if "max_episode_steps" not in kwargs:
+            kwargs["max_episode_steps"] = 24 * 60 * 60 * 20  # 24 hours * 20hz
+        self.episode_len = kwargs["max_episode_steps"]
         super().__init__(*args, **kwargs)
 
     def create_rewardables(self) -> List[Handler]:
@@ -59,9 +59,8 @@ class Survival(SimpleEmbodimentEnvSpec):
 
     def create_server_quit_producers(self) -> List[Handler]:
         return [
-            handlers.ServerQuitFromTimeUp(
-                (self.episode_len * MS_PER_STEP)),
-            handlers.ServerQuitWhenAnyAgentFinishes()
+            handlers.ServerQuitFromTimeUp((self.episode_len * MS_PER_STEP)),
+            handlers.ServerQuitWhenAnyAgentFinishes(),
         ]
 
     def create_server_decorators(self) -> List[Handler]:
@@ -69,13 +68,8 @@ class Survival(SimpleEmbodimentEnvSpec):
 
     def create_server_initial_conditions(self) -> List[Handler]:
         return [
-            handlers.TimeInitialCondition(
-                allow_passage_of_time=True,
-                start_time=0
-            ),
-            handlers.SpawningInitialCondition(
-                allow_spawning=True
-            )
+            handlers.TimeInitialCondition(allow_passage_of_time=True, start_time=0),
+            handlers.SpawningInitialCondition(allow_spawning=True),
         ]
 
     def determine_success_from_rewards(self, rewards: list) -> bool:
@@ -83,7 +77,7 @@ class Survival(SimpleEmbodimentEnvSpec):
         return True
 
     def is_from_folder(self, folder: str) -> bool:
-        return folder == 'none'
+        return folder == "none"
 
     def get_docstring(self):
         return SURVIVIAL_DOC
@@ -95,16 +89,14 @@ class Survival(SimpleEmbodimentEnvSpec):
         return [
             handlers.POVObservation(self.resolution),
             handlers.FlatInventoryObservation(ALL_ITEMS),
-            handlers.TypeObservation('mainhand', none + ALL_ITEMS + other),
-            handlers.DamageObservation('mainhand'),
-            handlers.MaxDamageObservation('mainhand'),
-            handlers.ObservationFromCurrentLocation()
+            handlers.TypeObservation("mainhand", none + ALL_ITEMS + other),
+            handlers.DamageObservation("mainhand"),
+            handlers.MaxDamageObservation("mainhand"),
+            handlers.ObservationFromCurrentLocation(),
         ]
 
     def create_actionables(self) -> List[Handler]:
-        actionables = [
-            handlers.KeyboardAction(k, v) for k, v in INVERSE_KEYMAP.items()
-        ]
+        actionables = [handlers.KeyboardAction(k, v) for k, v in INVERSE_KEYMAP.items()]
         actionables += [
             handlers.CraftItem(none + ALL_ITEMS),
             handlers.CraftItemNearby(none + ALL_ITEMS),

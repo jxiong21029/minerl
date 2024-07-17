@@ -4,6 +4,7 @@ __email__ = "sanderschulhoff@gmail.com"
 from minerl.herobraine.hero.handlers.agent.action import Action
 import minerl.herobraine.hero.spaces as spaces
 
+
 # TODO add more command support (things like what commands are allowed) from Malmo
 # TODO ensure other agents can send chats, not just first agent (again, check Malmo)
 class ChatAction(Action):
@@ -21,13 +22,13 @@ class ChatAction(Action):
     """
 
     def to_string(self):
-        return 'chat'
+        return "chat"
 
     def xml_template(self) -> str:
         return str("<ChatCommands> </ChatCommands>")
 
     def __init__(self):
-        self._command = 'chat'
+        self._command = "chat"
         super().__init__(self.command, spaces.Text([1]))
 
     def from_universal(self, x):

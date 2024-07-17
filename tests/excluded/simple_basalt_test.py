@@ -20,24 +20,23 @@ def main():
     """
     Tests running a simple environment.
     """
-    #env = gym.make('MineRLBasaltMakeWaterfallHighRes-v0')
-    env = gym.make('MineRLBasaltFindCaveHighRes-v0')
+    # env = gym.make('MineRLBasaltMakeWaterfallHighRes-v0')
+    env = gym.make("MineRLBasaltFindCaveHighRes-v0")
     print(env.action_space)
     print(env.observation_space)
     for i in range(NUM_EPISODES):
-        #env.seed(i)
+        # env.seed(i)
         obs = env.reset()
         done = False
         netr = 0
         for _ in range(100000):
             random_act = env.action_space.sample()
-            obs, reward, done, info = env.step(
-                random_act
-            )
+            obs, reward, done, info = env.step(random_act)
             netr += reward
             env.render()
             if done:
                 break
+
 
 if __name__ == "__main__":
     main()

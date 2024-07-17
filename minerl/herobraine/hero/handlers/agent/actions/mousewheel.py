@@ -9,12 +9,14 @@ class MouseWheelAction(Action):
     """
 
     def to_string(self):
-        return 'dwheel'
+        return "dwheel"
 
     def xml_template(self) -> str:
         return str("<MouseWheel/>")
 
     def __init__(self):
-        self._command = 'dwheel'
+        self._command = "dwheel"
         # TODO the limits are arbitrary
-        super().__init__(self.command, spaces.Box(low=-10, high=10, shape=[1], dtype=np.float32))
+        super().__init__(
+            self.command, spaces.Box(low=-10, high=10, shape=[1], dtype=np.float32)
+        )

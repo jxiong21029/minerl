@@ -13,6 +13,4 @@ class RandomizedStartDecorator(Handler):
         return "randomized_start_decorator"
 
     def xml_template(self) -> str:
-        return str(
-            """<RandomizedStartDecorator/>"""
-        )
+        return str("""<RandomizedStartDecorator/>""")

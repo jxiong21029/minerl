@@ -26,7 +26,7 @@ def main():
     Tests running a simple environment.
     """
     os.environ["AICROWD_IS_GRADING"] = "1"
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
 
     for _ in range(NUM_EPISODES):
         obs = env.reset()

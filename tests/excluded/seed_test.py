@@ -21,7 +21,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
 
     actions = [env.action_space.sample() for _ in range(2000)]
     xposes = []
@@ -36,20 +36,20 @@ def main():
             random_act = env.action_space.noop()
             # if(len(rewards) > 50):
 
-            random_act['camera'] = [0, 0.1]
-            random_act['back'] = 0
-            random_act['forward'] = 1
-            random_act['jump'] = 1
-            random_act['attack'] = 1
+            random_act["camera"] = [0, 0.1]
+            random_act["back"] = 0
+            random_act["forward"] = 1
+            random_act["jump"] = 1
+            random_act["attack"] = 1
             # print(random_act)
-            obs, reward, done, info = env.step(
-                random_act)
+            obs, reward, done, info = env.step(random_act)
             env.render()
             rewards.append(reward)
             netr += reward
             # print(reward, netr)
         reward_list.append(rewards)
     import matplotlib.pyplot as plt
+
     for t in range(NUM_EPISODES):
         plt.plot(np.cumsum(reward_list[t]))
     # plt.plot(np.cumsum(reward_list[1]))

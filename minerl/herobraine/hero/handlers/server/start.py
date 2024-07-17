@@ -36,9 +36,7 @@ class WeatherInitialCondition(Handler):
         return "weather_initial_condition"
 
     def xml_template(self) -> str:
-        return str(
-            """<Weather>{{weather | string }}</Weather>"""
-        )
+        return str("""<Weather>{{weather | string }}</Weather>""")
 
     def __init__(self, weather: str):
         self.weather = weather

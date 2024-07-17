@@ -7,8 +7,8 @@ from minerl.herobraine.hero.handler import Handler
 
 
 class NavigationDecorator(Handler):
-    """ Specifies the navigate goal. 
-        This class should enable the parameterization of all of the fields in the XML.
+    """Specifies the navigate goal.
+    This class should enable the parameterization of all of the fields in the XML.
     """
 
     def to_string(self) -> str:
@@ -33,24 +33,25 @@ class NavigationDecorator(Handler):
         )
 
     def __init__(
-            self,
-            max_randomized_radius: int = 64,
-            min_randomized_radius: int = 64,
-            min_randomized_distance: int = 0,
-            max_randomized_distance: int = 8,
-            max_radius: int = 8,
-            min_radius: int = 0,
-            block: str = "diamond_block",
-            placement: str = "fixed_surface",
-            randomize_compass_location: bool = False):
+        self,
+        max_randomized_radius: int = 64,
+        min_randomized_radius: int = 64,
+        min_randomized_distance: int = 0,
+        max_randomized_distance: int = 8,
+        max_radius: int = 8,
+        min_radius: int = 0,
+        block: str = "diamond_block",
+        placement: str = "fixed_surface",
+        randomize_compass_location: bool = False,
+    ):
         """Initialize navigation decorator
 
-            :param max_randomized_radius: Maximum value to randomize placement
-            :param min_randomized_radius: Minimum value to randomize placement
-            :param max_radius: Maximum radius to place in the X axis
-            :param min_radius: Minimum radius to place in the X axis
-            :param block: Type of block to appear.
-            :param placement: 'fixed_surface' or otherwise (see XML schema)
+        :param max_randomized_radius: Maximum value to randomize placement
+        :param min_randomized_radius: Minimum value to randomize placement
+        :param max_radius: Maximum radius to place in the X axis
+        :param min_radius: Minimum radius to place in the X axis
+        :param block: Type of block to appear.
+        :param placement: 'fixed_surface' or otherwise (see XML schema)
         """
         self.max_randomized_radius = max_randomized_radius
         self.min_randomized_radius = min_randomized_radius

@@ -20,7 +20,7 @@ SIMPLE_KEYBOARD_ACTION = [
     "jump",
     "sneak",
     "sprint",
-    "attack"
+    "attack",
 ]
 
 
@@ -34,9 +34,7 @@ class SimpleEmbodimentEnvSpec(EnvSpec, ABC):
         super().__init__(name, *args, **kwargs)
 
     def create_observables(self) -> List[TranslationHandler]:
-        return [
-            handlers.POVObservation(self.resolution)
-        ]
+        return [handlers.POVObservation(self.resolution)]
 
     def create_actionables(self) -> List[TranslationHandler]:
         """
@@ -44,11 +42,10 @@ class SimpleEmbodimentEnvSpec(EnvSpec, ABC):
         not all.
         """
         return [
-                   handlers.KeybasedCommandAction(k, v) for k, v in INVERSE_KEYMAP.items()
-                   if k in SIMPLE_KEYBOARD_ACTION
-               ] + [
-                   handlers.CameraAction()
-               ]
+            handlers.KeybasedCommandAction(k, v)
+            for k, v in INVERSE_KEYMAP.items()
+            if k in SIMPLE_KEYBOARD_ACTION
+        ] + [handlers.CameraAction()]
 
     def create_monitors(self) -> List[TranslationHandler]:
         return []  # No monitors by default!

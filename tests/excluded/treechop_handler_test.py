@@ -18,6 +18,7 @@ coloredlogs.install(logging.DEBUG)
 # import minerl.env.bootstrap
 # minerl.env.bootstrap._check_port_avail = lambda _,__: True
 
+
 def gen_obtain_debug_actions(env):
     actions = []
 
@@ -49,7 +50,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLTreechop-v0')
+    env = gym.make("MineRLTreechop-v0")
 
     env.seed(17)
     obs = env.reset()
@@ -62,7 +63,7 @@ def main():
         if reward != 0:
             print(reward)
         if done:
-            print('done!')
+            print("done!")
             break
 
     print("Demo complete.")

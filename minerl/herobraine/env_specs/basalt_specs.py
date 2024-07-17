@@ -44,8 +44,10 @@ MAKE_HOUSE_VILLAGE_INVENTORY = [
     dict(type="lantern", quantity=64),
 ]
 
+
 class BasaltTimeoutWrapper(gym.Wrapper):
     """Timeout wrapper specifically crafted for the BASALT environments"""
+
     def __init__(self, env):
         super().__init__(env)
         self.timeout = self.env.task.max_episode_steps
@@ -69,6 +71,7 @@ class DoneOnESCWrapper(gym.Wrapper):
     Use the "ESC" action of the MineRL 1.0.0 to end
     an episode (if 1, step will return done=True)
     """
+
     def __init__(self, env):
         super().__init__(env)
         self.episode_over = False
@@ -87,8 +90,8 @@ class DoneOnESCWrapper(gym.Wrapper):
 
 
 def _basalt_gym_entrypoint(
-        env_spec: "BasaltBaseEnvSpec",
-        fake: bool = False,
+    env_spec: "BasaltBaseEnvSpec",
+    fake: bool = False,
 ) -> _singleagent._SingleAgentEnv:
     """Used as entrypoint for `gym.make`."""
     if fake:
@@ -101,21 +104,22 @@ def _basalt_gym_entrypoint(
     return env
 
 
-BASALT_GYM_ENTRY_POINT = "minerl.herobraine.env_specs.basalt_specs:_basalt_gym_entrypoint"
+BASALT_GYM_ENTRY_POINT = (
+    "minerl.herobraine.env_specs.basalt_specs:_basalt_gym_entrypoint"
+)
 
 
 class BasaltBaseEnvSpec(HumanControlEnvSpec):
-
     LOW_RES_SIZE = 64
     HIGH_RES_SIZE = 1024
 
     def __init__(
-            self,
-            name,
-            demo_server_experiment_name,
-            max_episode_steps=2400,
-            inventory: Sequence[dict] = (),
-            preferred_spawn_biome: str = "plains"
+        self,
+        name,
+        demo_server_experiment_name,
+        max_episode_steps=2400,
+        inventory: Sequence[dict] = (),
+        preferred_spawn_biome: str = "plains",
     ):
         self.inventory = inventory  # Used by minerl.util.docs to construct Sphinx docs.
         self.preferred_spawn_biome = preferred_spawn_biome
@@ -128,7 +132,7 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
             resolution=[640, 360],
             gamma_range=[2, 2],
             guiscale_range=[1, 1],
-            cursor_size_range=[16.0, 16.0]
+            cursor_size_range=[16.0, 16.0],
         )
 
     def is_from_folder(self, folder: str) -> bool:
@@ -149,7 +153,7 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
         return super().create_agent_start() + [
             handlers.SimpleInventoryAgentStart(self.inventory),
             handlers.PreferredSpawnBiome(self.preferred_spawn_biome),
-            handlers.DoneOnDeath()
+            handlers.DoneOnDeath(),
         ]
 
     def create_agent_handlers(self) -> List[handlers.Handler]:
@@ -161,9 +165,8 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
 
     def create_server_quit_producers(self) -> List[handlers.Handler]:
         return [
-            handlers.ServerQuitFromTimeUp(
-                (self.max_episode_steps * mc.MS_PER_STEP)),
-            handlers.ServerQuitWhenAnyAgentFinishes()
+            handlers.ServerQuitFromTimeUp((self.max_episode_steps * mc.MS_PER_STEP)),
+            handlers.ServerQuitWhenAnyAgentFinishes(),
         ]
 
     def create_server_decorators(self) -> List[handlers.Handler]:
@@ -171,12 +174,8 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
 
     def create_server_initial_conditions(self) -> List[handlers.Handler]:
         return [
-            handlers.TimeInitialCondition(
-                allow_passage_of_time=False
-            ),
-            handlers.SpawningInitialCondition(
-                allow_spawning=True
-            )
+            handlers.TimeInitialCondition(allow_passage_of_time=False),
+            handlers.SpawningInitialCondition(allow_spawning=True),
         ]
 
     def get_blacklist_reason(self, npz_data: dict) -> Optional[str]:
@@ -230,33 +229,33 @@ MINUTE = 20 * 60
 
 class FindCaveEnvSpec(BasaltBaseEnvSpec):
     """
-.. image:: ../assets/basalt/caves1_0-05.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/caves1_0-05.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/caves3_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/caves3_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/caves4_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/caves4_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/caves5_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/caves5_0-30.gif
+      :scale: 100 %
+      :alt:
 
-After spawning in a plains biome, explore and find a cave. When inside a cave, end
-the episode by setting the "ESC" action to 1.
+    After spawning in a plains biome, explore and find a cave. When inside a cave, end
+    the episode by setting the "ESC" action to 1.
 
-You are not allowed to dig down from the surface to find a cave.
-"""
+    You are not allowed to dig down from the surface to find a cave.
+    """
 
     def __init__(self):
         super().__init__(
             name="MineRLBasaltFindCave-v0",
             demo_server_experiment_name="findcaves",
-            max_episode_steps=3*MINUTE,
+            max_episode_steps=3 * MINUTE,
             preferred_spawn_biome="plains",
             inventory=[],
         )
@@ -264,33 +263,33 @@ You are not allowed to dig down from the surface to find a cave.
 
 class MakeWaterfallEnvSpec(BasaltBaseEnvSpec):
     """
-.. image:: ../assets/basalt/waterfall0_0-05.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/waterfall0_0-05.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/waterfall2_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/waterfall2_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/waterfall6_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/waterfall6_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/waterfall8_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/waterfall8_0-30.gif
+      :scale: 100 %
+      :alt:
 
-After spawning in an extreme hills biome, use your waterbucket to make a beautiful waterfall.
-Then take an aesthetic "picture" of it by moving to a good location, positioning
-player's camera to have a nice view of the waterfall, and ending the episode by
-setting "ESC" action to 1.
-"""
+    After spawning in an extreme hills biome, use your waterbucket to make a beautiful waterfall.
+    Then take an aesthetic "picture" of it by moving to a good location, positioning
+    player's camera to have a nice view of the waterfall, and ending the episode by
+    setting "ESC" action to 1.
+    """
 
     def __init__(self):
         super().__init__(
             name="MineRLBasaltMakeWaterfall-v0",
             demo_server_experiment_name="waterfall",
-            max_episode_steps=5*MINUTE,
+            max_episode_steps=5 * MINUTE,
             preferred_spawn_biome="extreme_hills",
             inventory=[
                 dict(type="water_bucket", quantity=1),
@@ -303,39 +302,39 @@ setting "ESC" action to 1.
 
 class PenAnimalsVillageEnvSpec(BasaltBaseEnvSpec):
     """
-.. image:: ../assets/basalt/animal_pen_village1_1-00.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/animal_pen_village1_1-00.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/animal_pen_village3_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/animal_pen_village3_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/animal_pen_village4_0-05.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/animal_pen_village4_0-05.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/animal_pen_village4_1-00.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/animal_pen_village4_1-00.gif
+      :scale: 100 %
+      :alt:
 
-After spawning in a village, build an animal pen next to one of the houses in a village.
-Use your fence posts to build one animal pen that contains at least two of the same animal.
-(You are only allowed to pen chickens, cows, pigs, or sheep.)
-There should be at least one gate that allows players to enter and exit easily.
-The animal pen should not contain more than one type of animal.
-(You may kill any extra types of animals that accidentally got into the pen.)
+    After spawning in a village, build an animal pen next to one of the houses in a village.
+    Use your fence posts to build one animal pen that contains at least two of the same animal.
+    (You are only allowed to pen chickens, cows, pigs, or sheep.)
+    There should be at least one gate that allows players to enter and exit easily.
+    The animal pen should not contain more than one type of animal.
+    (You may kill any extra types of animals that accidentally got into the pen.)
 
-Do not harm villagers or existing village structures in the process.
+    Do not harm villagers or existing village structures in the process.
 
-Send 1 for "ESC" key to end the episode.
-"""
+    Send 1 for "ESC" key to end the episode.
+    """
 
     def __init__(self):
         super().__init__(
             name="MineRLBasaltCreateVillageAnimalPen-v0",
             demo_server_experiment_name="village_pen_animals",
-            max_episode_steps=5*MINUTE,
+            max_episode_steps=5 * MINUTE,
             preferred_spawn_biome="plains",
             inventory=[
                 dict(type="oak_fence", quantity=64),
@@ -347,51 +346,48 @@ Send 1 for "ESC" key to end the episode.
         )
 
     def create_agent_start(self) -> List[handlers.Handler]:
-        return super().create_agent_start() + [
-            handlers.SpawnInVillage()
-        ]
+        return super().create_agent_start() + [handlers.SpawnInVillage()]
 
 
 class VillageMakeHouseEnvSpec(BasaltBaseEnvSpec):
     """
-.. image:: ../assets/basalt/house_0_0-05.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/house_0_0-05.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/house_1_0-30.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/house_1_0-30.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/house_3_1-00.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/house_3_1-00.gif
+      :scale: 100 %
+      :alt:
 
-.. image:: ../assets/basalt/house_long_7-00.gif
-  :scale: 100 %
-  :alt:
+    .. image:: ../assets/basalt/house_long_7-00.gif
+      :scale: 100 %
+      :alt:
 
-Build a house in the style of the village without damaging the village. It
-should be in an appropriate location  (e.g. next to the path through the village)
-Then, give a brief tour of the house (i.e. spin around slowly such that all of the
-walls and the roof are visible).
-Finally, end the episode by setting the "ESC" action to 1.
+    Build a house in the style of the village without damaging the village. It
+    should be in an appropriate location  (e.g. next to the path through the village)
+    Then, give a brief tour of the house (i.e. spin around slowly such that all of the
+    walls and the roof are visible).
+    Finally, end the episode by setting the "ESC" action to 1.
 
 
-.. tip::
-  You can find detailed information on which materials are used in each biome-specific
-  village (plains, savannah, taiga, desert) here:
-  https://minecraft.wiki/w/Village/Structure/Blueprints
-"""
+    .. tip::
+      You can find detailed information on which materials are used in each biome-specific
+      village (plains, savannah, taiga, desert) here:
+      https://minecraft.wiki/w/Village/Structure/Blueprints
+    """
+
     def __init__(self):
         super().__init__(
             name="MineRLBasaltBuildVillageHouse-v0",
             demo_server_experiment_name="village_make_house",
-            max_episode_steps=12*MINUTE,
+            max_episode_steps=12 * MINUTE,
             preferred_spawn_biome="plains",
             inventory=MAKE_HOUSE_VILLAGE_INVENTORY,
         )
 
     def create_agent_start(self) -> List[handlers.Handler]:
-        return super().create_agent_start() + [
-            handlers.SpawnInVillage()
-        ]
+        return super().create_agent_start() + [handlers.SpawnInVillage()]

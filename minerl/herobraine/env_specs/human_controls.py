@@ -11,7 +11,6 @@ from typing import List
 import numpy as np
 
 
-
 class HumanControlEnvSpec(EnvSpec, ABC):
     """
     A simple base environment from which all other simple envs inherit.
@@ -37,15 +36,17 @@ class HumanControlEnvSpec(EnvSpec, ABC):
                                is below 16, cursor sprite is rendered cropped.
     """
 
-
-    def __init__(self, name, *args,
-                 resolution=(640, 360),
-                 guiscale_range=[1, 1],
-                 gamma_range=[2.0, 2.0],
-                 fov_range=[70.0, 70.0],
-                 cursor_size_range=[16, 16],
-                 **kwargs):
-
+    def __init__(
+        self,
+        name,
+        *args,
+        resolution=(640, 360),
+        guiscale_range=[1, 1],
+        gamma_range=[2.0, 2.0],
+        fov_range=[70.0, 70.0],
+        cursor_size_range=[16, 16],
+        **kwargs,
+    ):
         self.resolution = resolution
         self.guiscale_range = guiscale_range
         self.gamma_range = gamma_range
@@ -56,18 +57,19 @@ class HumanControlEnvSpec(EnvSpec, ABC):
     def create_observables(self) -> List[TranslationHandler]:
         return [
             H.POVObservation(self.resolution),
-            H.FlatInventoryObservation(ALL_ITEMS)
+            H.FlatInventoryObservation(ALL_ITEMS),
         ]
-
 
     def create_actionables(self) -> List[TranslationHandler]:
         """
         Simple envs have some basic keyboard control functionality, but
         not all.
         """
-        return [
-           H.KeybasedCommandAction(v, v) for v in mc.KEYMAP.values()
-        ] + [H.CameraAction()] + [H.ChatAction()]
+        return (
+            [H.KeybasedCommandAction(v, v) for v in mc.KEYMAP.values()]
+            + [H.CameraAction()]
+            + [H.ChatAction()]
+        )
 
     def create_monitors(self) -> List[TranslationHandler]:
         return [H.IsGuiOpen(), H.ObservationFromCurrentLocation()]
@@ -76,8 +78,16 @@ class HumanControlEnvSpec(EnvSpec, ABC):
         gui_handler = H.GuiScale(np.random.uniform(*self.guiscale_range))
         gamma_handler = H.GammaSetting(np.random.uniform(*self.gamma_range))
         fov_handler = H.FOVSetting(np.random.uniform(*self.fov_range))
-        cursor_size_handler = H.FakeCursorSize(np.random.randint(self.cursor_size_range[0], self.cursor_size_range[1] + 1))
-        return [H.LowLevelInputsAgentStart(), gui_handler, gamma_handler, fov_handler, cursor_size_handler]
+        cursor_size_handler = H.FakeCursorSize(
+            np.random.randint(self.cursor_size_range[0], self.cursor_size_range[1] + 1)
+        )
+        return [
+            H.LowLevelInputsAgentStart(),
+            gui_handler,
+            gamma_handler,
+            fov_handler,
+            cursor_size_handler,
+        ]
 
 
 class SimpleHumanEmbodimentEnvSpec(HumanControlEnvSpec):
@@ -91,9 +101,7 @@ class SimpleHumanEmbodimentEnvSpec(HumanControlEnvSpec):
         super().__init__(name, *args, **kwargs)
 
     def create_observables(self) -> List[TranslationHandler]:
-        return [
-            H.POVObservation(self.resolution)
-        ]
+        return [H.POVObservation(self.resolution)]
 
     def create_actionables(self) -> List[TranslationHandler]:
         """
@@ -101,18 +109,19 @@ class SimpleHumanEmbodimentEnvSpec(HumanControlEnvSpec):
         not all.
         """
         return [
-            H.KeybasedCommandAction(k, v) for k, v in INVERSE_KEYMAP.items()
+            H.KeybasedCommandAction(k, v)
+            for k, v in INVERSE_KEYMAP.items()
             if k in SIMPLE_KEYBOARD_ACTION
-        ] + [
-            H.CameraAction()
-        ]
+        ] + [H.CameraAction()]
 
     def create_agent_start(self) -> List[Handler]:
         # These are needed to run the code
         gui_handler = H.GuiScale(np.random.uniform(*self.guiscale_range))
         gamma_handler = H.GammaSetting(np.random.uniform(*self.gamma_range))
         fov_handler = H.FOVSetting(np.random.uniform(*self.fov_range))
-        cursor_size_handler = H.FakeCursorSize(np.random.randint(self.cursor_size_range[0], self.cursor_size_range[1] + 1))
+        cursor_size_handler = H.FakeCursorSize(
+            np.random.randint(self.cursor_size_range[0], self.cursor_size_range[1] + 1)
+        )
         return [gui_handler, gamma_handler, fov_handler, cursor_size_handler]
 
     def create_monitors(self) -> List[TranslationHandler]:

@@ -73,7 +73,7 @@ class AgentQuitFromPossessingItem(Handler):
 
     def __init__(self, items: List[Dict[str, Union[str, int]]]):
         """Creates a reward which will cause the player to quit when they obtain something.
-        
+
         aqfpi = AgentQuitFromPossessingItem([
             dict(type="log", amount=64)
         ])

@@ -3,6 +3,7 @@ from typing import Any
 from minerl.herobraine.hero import spaces
 from minerl.herobraine.hero.handlers.translation import TranslationHandler
 
+
 class IsGuiOpen(TranslationHandler):
     def __init__(self):
         super().__init__(spaces.Discrete(2))
@@ -15,7 +16,7 @@ class IsGuiOpen(TranslationHandler):
 
     def to_hero(self, x) -> str:
         raise NotImplementedError("This should not be called")
-        # theoretically, this is 
+        # theoretically, this is
         # return json.dumps[{"isGuiOpen": x}]
 
     def from_universal(self, x: typing.Dict[str, Any]):

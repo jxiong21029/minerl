@@ -66,8 +66,13 @@ class _RewardForPosessingItemBase(RewardHandler):
                 """
         )
 
-    def __init__(self, sparse: bool, exclude_loops: bool, item_rewards: List[Dict[str, Union[str, int]]]):
-        """Creates a reward which gives rewards based on items in the 
+    def __init__(
+        self,
+        sparse: bool,
+        exclude_loops: bool,
+        item_rewards: List[Dict[str, Union[str, int]]],
+    ):
+        """Creates a reward which gives rewards based on items in the
         inventory that are provided.
 
         See Malmo for documentation.
@@ -77,11 +82,13 @@ class _RewardForPosessingItemBase(RewardHandler):
         self.exclude_loops = exclude_loops
         self.items = item_rewards
         self.reward_dict = {
-            a['type']: dict(reward=a['reward'], amount=a['amount']) for a in self.items
+            a["type"]: dict(reward=a["reward"], amount=a["amount"]) for a in self.items
         }
         # Assert that no amount is greater than 1.
         for k, v in self.reward_dict.items():
-            assert int(v['amount']) <= 1, "Currently from universal is not implemented for item amounts > 1"
+            assert (
+                int(v["amount"]) <= 1
+            ), "Currently from universal is not implemented for item amounts > 1"
 
         # Assert all items have the appropriate fields for the XML template.
         for item in self.items:
@@ -106,14 +113,17 @@ class RewardForCollectingItems(_RewardForPosessingItemBase):
     def from_universal(self, x):
         # TODO: Now get all of these to work correctly.
         total_reward = 0
-        if 'diff' in x and 'changes' in x['diff']:
-            for change_json in x['diff']['changes']:
-                item_name = strip_item_prefix(change_json['item'])
-                if item_name == 'log2':
-                    item_name = 'log'
-                if item_name in self.reward_dict and 'quantity_change' in change_json:
-                    if change_json['quantity_change'] > 0:
-                        total_reward += change_json['quantity_change'] * self.reward_dict[item_name]['reward']
+        if "diff" in x and "changes" in x["diff"]:
+            for change_json in x["diff"]["changes"]:
+                item_name = strip_item_prefix(change_json["item"])
+                if item_name == "log2":
+                    item_name = "log"
+                if item_name in self.reward_dict and "quantity_change" in change_json:
+                    if change_json["quantity_change"] > 0:
+                        total_reward += (
+                            change_json["quantity_change"]
+                            * self.reward_dict[item_name]["reward"]
+                        )
         return total_reward
 
 
@@ -132,14 +142,18 @@ class RewardForCollectingItemsOnce(_RewardForPosessingItemBase):
 
     def from_universal(self, x):
         total_reward = 0
-        if 'diff' in x and 'changes' in x['diff']:
-            for change_json in x['diff']['changes']:
-                item_name = strip_item_prefix(change_json['item'])
-                if item_name == 'log2':
-                    item_name = 'log'
-                if item_name in self.reward_dict and 'quantity_change' in change_json and item_name not in self.seen_dict:
-                    if change_json['quantity_change'] > 0:
-                        total_reward += self.reward_dict[item_name]['reward']
+        if "diff" in x and "changes" in x["diff"]:
+            for change_json in x["diff"]["changes"]:
+                item_name = strip_item_prefix(change_json["item"])
+                if item_name == "log2":
+                    item_name = "log"
+                if (
+                    item_name in self.reward_dict
+                    and "quantity_change" in change_json
+                    and item_name not in self.seen_dict
+                ):
+                    if change_json["quantity_change"] > 0:
+                        total_reward += self.reward_dict[item_name]["reward"]
                         self.seen_dict[item_name] = True
         return total_reward
 
@@ -165,7 +179,7 @@ class RewardForMissionEnd(RewardHandler):
         self.description = description
 
     def from_universal(self, obs):
-        # TODO: IMPLEMENT THE FROM UNVIERSAL HERE. 
+        # TODO: IMPLEMENT THE FROM UNVIERSAL HERE.
         # Idea: just add an "episode terminated obs in the universal"
         # during generate.
         return 0
@@ -198,25 +212,26 @@ class RewardForTouchingBlockType(RewardHandler):
         """
         super().__init__()
         self.blocks = blocks
-        self.fired = {bl['type']: False for bl in self.blocks}
+        self.fired = {bl["type"]: False for bl in self.blocks}
         # Assert all blocks have the appropriate fields for the XML template.
         for block in self.blocks:
             assert set(block.keys()) == {"reward", "type", "behaviour"}
 
     def from_universal(self, obs):
         reward = 0
-        if 'touched_blocks' in obs:
-            for block in obs['touched_blocks']:
+        if "touched_blocks" in obs:
+            for block in obs["touched_blocks"]:
                 for bl in self.blocks:
-                    if bl['type'] in block['name'] and (
-                            not self.fired[bl['type']] or bl['behaviour'] != "onlyOnce"):
-                        reward += bl['reward']
-                        self.fired[bl['type']] = True
+                    if bl["type"] in block["name"] and (
+                        not self.fired[bl["type"]] or bl["behaviour"] != "onlyOnce"
+                    ):
+                        reward += bl["reward"]
+                        self.fired[bl["type"]] = True
 
         return reward
 
     def reset(self):
-        self.fired = {bl['type']: False for bl in self.blocks}
+        self.fired = {bl["type"]: False for bl in self.blocks}
 
 
 # <RewardForDistanceTraveledToCompassTarget rewardPerBlock="1" density="PER_TICK"/>
@@ -229,18 +244,18 @@ class RewardForDistanceTraveledToCompassTarget(RewardHandler):
             """<RewardForDistanceTraveledToCompassTarget rewardPerBlock="{{ reward_per_block }}" density="{{ density }}"/>"""
         )
 
-    def __init__(self, reward_per_block: int, density: str = 'PER_TICK'):
+    def __init__(self, reward_per_block: int, density: str = "PER_TICK"):
         """Creates a reward which is awarded when the player reaches a certain distance from a target."""
         self.reward_per_block = reward_per_block
         self.density = density
         self._prev_delta = None
 
     def from_universal(self, obs):
-        if 'compass' in obs and 'deltaDistance' in obs['compass']:
+        if "compass" in obs and "deltaDistance" in obs["compass"]:
             try:
-                target = obs['compass']['target']
+                target = obs["compass"]["target"]
                 target_pos = np.array([target["x"], target["y"], target["z"]])
-                position = obs['compass']['position']
+                position = obs["compass"]["position"]
                 cur_pos = np.array([position["x"], position["y"], position["z"]])
                 delta = np.linalg.norm(target_pos - cur_pos)
                 if not self._prev_delta:

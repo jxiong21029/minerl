@@ -35,7 +35,7 @@ class Handler(ABC):
         This XML representaiton is templated via Jinja2 and
         has access to all of the member variables of the class.
 
-        Note: This is not an abstract method so that 
+        Note: This is not an abstract method so that
         handlers without corresponding XML's can be combined in
         handler groups with group based XML implementations.
         """
@@ -51,7 +51,7 @@ class Handler(ABC):
         """
         var_dict = {}
         for attr_name in dir(self):
-            if 'xml' not in attr_name:
+            if "xml" not in attr_name:
                 var_dict[attr_name] = getattr(self, attr_name)
         try:
             env = jinja2.Environment(undefined=jinja2.StrictUndefined, autoescape=True)
@@ -68,8 +68,9 @@ class Handler(ABC):
         Checks to see if self and other have the same to_string
         and if so returns self, otherwise raises an exception.
         """
-        assert self.to_string() == other.to_string(), (
-            "Incompatible handlers: {self} and {other}".format(**locals()))
+        assert (
+            self.to_string() == other.to_string()
+        ), "Incompatible handlers: {self} and {other}".format(**locals())
         return self
 
     def __eq__(self, other):

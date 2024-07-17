@@ -19,7 +19,7 @@ def main():
     """
     Tests running a simple environment.
     """
-    env = gym.make('MineRLNavigateDense-v0')
+    env = gym.make("MineRLNavigateDense-v0")
     env.seed(420)
     for _ in range(NUM_EPISODES):
         obs = env.reset()
@@ -29,13 +29,12 @@ def main():
             random_act = env.action_space.noop()
             print(obs["compass"]["angle"])
 
-            random_act['camera'] = [0, 0.1 * obs["compass"]["angle"]]
-            random_act['back'] = 0
-            random_act['forward'] = 1
-            random_act['jump'] = 1
-            random_act['attack'] = 1
-            obs, reward, done, info = env.step(
-                random_act)
+            random_act["camera"] = [0, 0.1 * obs["compass"]["angle"]]
+            random_act["back"] = 0
+            random_act["forward"] = 1
+            random_act["jump"] = 1
+            random_act["attack"] = 1
+            obs, reward, done, info = env.step(random_act)
             # print(info)
             netr += reward
             env.render()

@@ -17,8 +17,10 @@ from minerl.herobraine.wrappers.util import union_spaces
 import numpy as np
 
 
-def test_obf_wrapper(base_env=envs.MINERL_OBTAIN_DIAMOND_V0,
-                     common_envs=[envs.MINERL_NAVIGATE_DENSE_V0, envs.MINERL_OBTAIN_DIAMOND_V0]):
+def test_obf_wrapper(
+    base_env=envs.MINERL_OBTAIN_DIAMOND_V0,
+    common_envs=[envs.MINERL_NAVIGATE_DENSE_V0, envs.MINERL_OBTAIN_DIAMOND_V0],
+):
     """
     Tests that wrap_action composed with unwrap action is the identity.
     1. Construct an VecWrapper of an EnvSpec called ObtainDiamond
@@ -79,7 +81,9 @@ def test_wrap_unwrap_action_navigate():
     test_wrap_unwrap_action(base_env=envs.MINERL_NAVIGATE_DENSE_EXTREME_V0)
 
 
-def test_wrap_unwrap_observation(base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_envs=None):
+def test_wrap_unwrap_observation(
+    base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_envs=None
+):
     """
     Tests that wrap_observation composed with unwrap observation is the identity.
     1. Construct an VecWrapper of an EnvSpec called ObtainDiamond
@@ -118,8 +122,8 @@ def test_vector_action_space(base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_env=
     assert isinstance(vec_env.observation_space, Dict)
     print(vec_env.action_space)
     print(vec_env.action_space.spaces)
-    assert ('vector' in vec_env.action_space.spaces)
-    assert ('vector' in vec_env.observation_space.spaces)
+    assert "vector" in vec_env.action_space.spaces
+    assert "vector" in vec_env.observation_space.spaces
 
 
 def test_diamond_space():
@@ -130,11 +134,11 @@ def test_union_spaces():
     act_1 = envs.MINERL_TREECHOP_V0.actionables
     act_2 = envs.MINERL_NAVIGATE_DENSE_V0.actionables
     for space in union_spaces(act_2, act_1):
-        assert (space in act_1 or space in act_2)
+        assert space in act_1 or space in act_2
     for space in act_1:
-        assert (space in union_spaces(act_1, act_2))
+        assert space in union_spaces(act_1, act_2)
     for space in act_2:
-        assert (space in union_spaces(act_2, act_1))
+        assert space in union_spaces(act_2, act_1)
 
 
 def test_vec_wrapping_with_common_envs():
@@ -154,7 +158,8 @@ def test_vec_wrapping_with_common_envs():
         envs.MINERL_OBTAIN_DIAMOND_V0,
         envs.MINERL_TREECHOP_V0,
         envs.MINERL_NAVIGATE_V0,
-        envs.MINERL_OBTAIN_IRON_PICKAXE_V0]
+        envs.MINERL_OBTAIN_IRON_PICKAXE_V0,
+    ]
 
     for base_env in common_envs:
         test_wrap_unwrap_observation(base_env, common_envs)
@@ -162,13 +167,16 @@ def test_vec_wrapping_with_common_envs():
 
 
 def test_published_envs():
-    map_common_space_no_op([
-        envs.MINERL_TREECHOP_OBF_V0,
-        envs.MINERL_NAVIGATE_OBF_V0,
-        envs.MINERL_NAVIGATE_DENSE_OBF_V0,
-        envs.MINERL_NAVIGATE_DENSE_EXTREME_OBF_V0,
-        envs.MINERL_OBTAIN_IRON_PICKAXE_DENSE_OBF_V0,
-        envs.MINERL_OBTAIN_DIAMOND_DENSE_OBF_V0])
+    map_common_space_no_op(
+        [
+            envs.MINERL_TREECHOP_OBF_V0,
+            envs.MINERL_NAVIGATE_OBF_V0,
+            envs.MINERL_NAVIGATE_DENSE_OBF_V0,
+            envs.MINERL_NAVIGATE_DENSE_EXTREME_OBF_V0,
+            envs.MINERL_OBTAIN_IRON_PICKAXE_DENSE_OBF_V0,
+            envs.MINERL_OBTAIN_DIAMOND_DENSE_OBF_V0,
+        ]
+    )
     test_wrap_unwrap_observation(envs.MINERL_TREECHOP_V0)
     test_wrap_unwrap_observation(envs.MINERL_NAVIGATE_V0)
     test_wrap_unwrap_observation(envs.MINERL_NAVIGATE_DENSE_V0)
@@ -177,5 +185,5 @@ def test_published_envs():
     test_wrap_unwrap_observation(envs.MINERL_OBTAIN_DIAMOND_DENSE_V0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_published_envs()

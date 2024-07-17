@@ -32,12 +32,15 @@ def launch_ns():
 
 def launch_im():
     return subprocess.Popen(
-        'python3 scripts/launch_instance_manager.py --seeding_type=3 --seeds=1,1,1,1;2,2,2,2'.split(' '), shell=False)
+        "python3 scripts/launch_instance_manager.py --seeding_type=3 --seeds=1,1,1,1;2,2,2,2".split(
+            " "
+        ),
+        shell=False,
+    )
 
 
 def main():
-    """Tests multi-instance seeding.
-    """
+    """Tests multi-instance seeding."""
     # try:
     #     # 1. Launch the pyro4-ns if it doesn't exist
     #     ns =launch_ns()
@@ -49,12 +52,13 @@ def main():
     # envs = []
 
     import gym
-    os.environ['MINERL_INSTANCE_MANAGER_REMOTE'] = '1'
+
+    os.environ["MINERL_INSTANCE_MANAGER_REMOTE"] = "1"
     import minerl
 
     def run_env():
         try:
-            env = gym.make('MineRLNavigateDense-v0')
+            env = gym.make("MineRLNavigateDense-v0")
         except Exception as e:
             print("Pyro traceback:")
             print("".join(Pyro4.util.getPyroTraceback()))
@@ -77,5 +81,5 @@ def main():
     # finally:
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

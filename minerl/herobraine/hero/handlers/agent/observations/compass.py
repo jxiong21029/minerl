@@ -1,16 +1,21 @@
 """
-    Defines compass observations.
+Defines compass observations.
 """
+
 import jinja2
 import numpy as np
 
 from minerl.herobraine.hero import spaces
+
 # Copyright (c) 2020 All Rights Reserved
 # Author: William H. Guss, Brandon Houghton
 
-from minerl.herobraine.hero.handlers.translation import KeymapTranslationHandler, TranslationHandlerGroup
+from minerl.herobraine.hero.handlers.translation import (
+    KeymapTranslationHandler,
+    TranslationHandlerGroup,
+)
 
-__all__ = ['CompassObservation']
+__all__ = ["CompassObservation"]
 
 
 class CompassObservation(TranslationHandlerGroup):
@@ -18,9 +23,7 @@ class CompassObservation(TranslationHandlerGroup):
         return "compass"
 
     def xml_template(self) -> str:
-        return str(
-            """<ObservationFromCompass/>"""
-        )
+        return str("""<ObservationFromCompass/>""")
 
     def __init__(self, angle=True, distance=False):
         """Initializes a compass observation. Forms
@@ -34,16 +37,15 @@ class CompassObservation(TranslationHandlerGroup):
         handlers = []
 
         if angle:
-            handlers.append(
-                _CompassAngleObservation()
-            )
+            handlers.append(_CompassAngleObservation())
         if distance:
             handlers.append(
                 KeymapTranslationHandler(
                     hero_keys=["distanceToCompassTarget"],
-                    univ_keys=['compass', 'distance'],
+                    univ_keys=["compass", "distance"],
                     to_string="distance",
-                    space=spaces.Box(low=0, high=np.inf, shape=(), dtype=np.float32))
+                    space=spaces.Box(low=0, high=np.inf, shape=(), dtype=np.float32),
+                )
             )
 
         super(CompassObservation, self).__init__(handlers=handlers)
@@ -57,9 +59,9 @@ class _CompassAngleObservation(KeymapTranslationHandler):
     def __init__(self):
         super().__init__(
             hero_keys=["compassAngle"],
-            univ_keys=['compass', "angle"],
+            univ_keys=["compass", "angle"],
             space=spaces.Box(low=-180.0, high=180.0, shape=(), dtype=np.float32),
-            to_string="angle"
+            to_string="angle",
         )
 
     def from_universal(self, obs):

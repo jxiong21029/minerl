@@ -7,6 +7,7 @@ import time
 import logging
 
 import gym
+
 # import matplotlib.pyplot as plt
 import minerl
 import numpy as np
@@ -23,14 +24,14 @@ def main():
     """
     Test fake speed test
     """
-    env = gym.make('FakeMineRLNavigateDense-v0')
+    env = gym.make("FakeMineRLNavigateDense-v0")
 
     random_act = env.action_space.noop()
-    random_act['camera'] = [0, 0.1]
-    random_act['back'] = 0
-    random_act['forward'] = 1
-    random_act['jump'] = 1
-    random_act['attack'] = 1
+    random_act["camera"] = [0, 0.1]
+    random_act["back"] = 0
+    random_act["forward"] = 1
+    random_act["jump"] = 1
+    random_act["attack"] = 1
     nsteps = 0
     avg_time = 0
     reward_list = []
@@ -45,9 +46,8 @@ def main():
 
             # print(random_act)
             t0 = time.time()
-            obs, reward, done, info = env.step(
-                random_act)
-            avg_time += (1 / (time.time() - t0))
+            obs, reward, done, info = env.step(random_act)
+            avg_time += 1 / (time.time() - t0)
             nsteps += 1
 
     print(" AVERAGE FPS WITHOUT MINECRAFT: " + str(avg_time / nsteps))

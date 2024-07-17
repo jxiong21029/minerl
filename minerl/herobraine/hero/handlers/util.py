@@ -4,8 +4,8 @@ from typing import Tuple, Optional, Sequence, Dict, Set, List
 
 def decode_item_maybe_with_metadata(s: str) -> Tuple[str, Optional[int]]:
     assert len(s) > 0
-    if '#' in s:
-        item_type, metadata_str = s.split('#')
+    if "#" in s:
+        item_type, metadata_str = s.split("#")
         if len(item_type) == 0:
             raise ValueError(f"invalid item_type '{item_type}' in '{s}'")
         metadata = int(metadata_str)
@@ -24,7 +24,9 @@ def encode_item_with_metadata(item_type: str, metadata: Optional[int]) -> str:
         return f"{item_type}#{metadata}"
 
 
-def error_on_malformed_item_list(item_list: Sequence[str], special_items: Sequence[str]):
+def error_on_malformed_item_list(
+    item_list: Sequence[str], special_items: Sequence[str]
+):
     """Check that there are no duplicate item IDs, overlapping item IDs
     (e.g. "planks#2" and "planks"), that special item types don't come with metadata
     constraints (e.g. "air#0" should not be valid).
@@ -34,7 +36,8 @@ def error_on_malformed_item_list(item_list: Sequence[str], special_items: Sequen
         item_type, metadata = decode_item_maybe_with_metadata(s)
         if item_type in special_items and metadata is not None:
             raise ValueError(
-                f"Non-None metadata={metadata} is not allowed for special item type '{item_type}'")
+                f"Non-None metadata={metadata} is not allowed for special item type '{item_type}'"
+            )
 
         metadata_set = map_type_to_metadata[item_type]
         if metadata in metadata_set:
@@ -51,9 +54,7 @@ def error_on_malformed_item_list(item_list: Sequence[str], special_items: Sequen
 
 
 def item_list_contains(
-        item_list: Sequence[str],
-        item_type: str,
-        metadata: Optional[str]
+    item_list: Sequence[str], item_type: str, metadata: Optional[str]
 ):
     # log clobber not supported here. (Only used by handlers without log clobber so far).
     if metadata is None:
@@ -63,10 +64,10 @@ def item_list_contains(
 
 
 def get_unique_matching_item_list_id(
-        item_list: Sequence[str],
-        item_type: str,
-        metadata: int,
-        clobber_logs=True,
+    item_list: Sequence[str],
+    item_type: str,
+    metadata: int,
+    clobber_logs=True,
 ) -> Optional[str]:
     """
     Assuming that `item_list` doesn't have duplicate elements, returns the string
@@ -106,7 +107,9 @@ def get_unique_matching_item_list_id(
         matches += 1
 
     if matches > 1:
-        raise ValueError(f"Multiple item identifiers match with {(item_type, metadata)}")
+        raise ValueError(
+            f"Multiple item identifiers match with {(item_type, metadata)}"
+        )
 
     return result
 

@@ -13,7 +13,7 @@ class PlaceBlock(ItemListAction):
     """
 
     def to_string(self):
-        return 'place'
+        return "place"
 
     def xml_template(self) -> str:
         return str("<PlaceCommands/>")
@@ -25,22 +25,23 @@ class PlaceBlock(ItemListAction):
         no-op and non-listed item respectively
         """
         self._items = blocks
-        self._command = 'place'
+        self._command = "place"
         kwargs = {}
         if _other is not None:
-            kwargs['_other'] = _other
+            kwargs["_other"] = _other
         if _default is not None:
-            kwargs['_default'] = _default
+            kwargs["_default"] = _default
         super().__init__(self._command, self._items, **kwargs)
         self._prev_inv = None
 
     def from_universal(self, obs):
         try:
-            for action in obs['custom_action']['actions'].keys():
+            for action in obs["custom_action"]["actions"].keys():
                 try:
                     if int(action) == -99 and self._prev_inv is not None:
-
-                        item_name = self._prev_inv[int(-10 + obs['hotbar'])]['name'].split("minecraft:")[-1]
+                        item_name = self._prev_inv[int(-10 + obs["hotbar"])][
+                            "name"
+                        ].split("minecraft:")[-1]
                         if item_name not in self._items:
                             raise ValueError()
                         else:
@@ -48,13 +49,13 @@ class PlaceBlock(ItemListAction):
                 except ValueError:
                     return self._other
         except TypeError:
-            print('Saw a type error in PlaceBlock')
+            print("Saw a type error in PlaceBlock")
             raise TypeError
         except KeyError:
             return self._default
         finally:
             try:
-                self._prev_inv = obs['slots']['gui']['slots']
+                self._prev_inv = obs["slots"]["gui"]["slots"]
             except KeyError:
                 self._prev_inv = None
 

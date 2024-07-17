@@ -13,7 +13,7 @@ SIMPLE_KEYBOARD_ACTION = [
     "jump",
     "sneak",
     "sprint",
-    "attack"
+    "attack",
 ]
 
 MC_ITEM_IDS = [
@@ -463,21 +463,22 @@ ALL_ACHIEVEMENTS = [
     "achievement.killWither",
     "achievement.fullBeacon",
     "achievement.exploreAllBiomes",
-    "achievement.overpowered"]
+    "achievement.overpowered",
+]
 
 KEYMAP = {
-    '17': 'forward',
-    '30': 'left',
-    '31': 'back',
-    '32': 'right',
-    '57': 'jump',
-    '18': 'inventory',
-    '16': 'drop',
-    '42': 'sneak',
-    '29': 'sprint',
-    '-100': 'attack',  # BUTTON0 Left Click
-    '-99': 'use',  # BUTTON1 Right Click
-    '-98': 'pickItem',  # BUTTON2 Middle Click
+    "17": "forward",
+    "30": "left",
+    "31": "back",
+    "32": "right",
+    "57": "jump",
+    "18": "inventory",
+    "16": "drop",
+    "42": "sneak",
+    "29": "sprint",
+    "-100": "attack",  # BUTTON0 Left Click
+    "-99": "use",  # BUTTON1 Right Click
+    "-98": "pickItem",  # BUTTON2 Middle Click
     # '20': 'chat',  # This and following not currently in use
     # '33': 'swapHands',
     # '15': 'playerlist',  # Show player list gui
@@ -493,9 +494,7 @@ KEYMAP = {
 KEYMAP.update({str(x + 1): str(x) for x in range(1, 10)})
 
 # TODO: add all other keys.
-INVERSE_KEYMAP = {
-    KEYMAP[key]: key for key in KEYMAP
-}
+INVERSE_KEYMAP = {KEYMAP[key]: key for key in KEYMAP}
 
 MAX_LIFE = 20  # Actual max life can be greater (e.g. after eating a golden apple)
 MAX_XP = 1395  # Represents level 30 in game - bounded by signed 32 bit int max
@@ -545,21 +544,29 @@ MINERL_ITEM_MAP = sorted(["none"] + ALL_ITEMS)
 
 ITEMS_BY_CATEGORY = {
     # Items which take 2 seconds to USE
-    'edible': [item['type'] for item in all_data['items'] if item['useAction'] in {'EAT', 'DRINK'}],
+    "edible": [
+        item["type"]
+        for item in all_data["items"]
+        if item["useAction"] in {"EAT", "DRINK"}
+    ],
     # Items which have ongoing effect when equipped (includes armor)
-    'tool': [], # [item['type'] for item in all_data['items'] if item['tab'] in {'tools', 'combat'}],
+    "tool": [],  # [item['type'] for item in all_data['items'] if item['tab'] in {'tools', 'combat'}],
     # Items which are used for building
-    'building_block': [], # [item['type'] for item in all_data['items'] if item['tab'] in {'buildingBlock'}],
+    "building_block": [],  # [item['type'] for item in all_data['items'] if item['tab'] in {'buildingBlock'}],
     # Redstone items (doors, buttons, levers)
-    'redstone': [], # [item['type'] for item in all_data['items'] if item['tab'] in {'redstone'}],
+    "redstone": [],  # [item['type'] for item in all_data['items'] if item['tab'] in {'redstone'}],
     # Brewing items
-    'brewing': [], # [item['type'] for item in all_data['items'] if item['tab'] in {'brewing'}],
+    "brewing": [],  # [item['type'] for item in all_data['items'] if item['tab'] in {'brewing'}],
     # Decoration items (includes torch)
-    'decoration': [], # [item['type'] for item in all_data['items'] if item['tab'] in {'decoration'}]
+    "decoration": [],  # [item['type'] for item in all_data['items'] if item['tab'] in {'decoration'}]
 }
 
 # Check that all edible items have the same maxUseDuration
-use_times = {item['maxUseDuration'] for item in all_data['items'] if item['useAction'] in {'EAT', 'DRINK'}}
+use_times = {
+    item["maxUseDuration"]
+    for item in all_data["items"]
+    if item["useAction"] in {"EAT", "DRINK"}
+}
 # assert len(use_times) == 1, "Edible items with multiple different eating times."
 # EDIBLE_USE_TICKS = use_times.pop()
 
@@ -608,50 +615,50 @@ def sort_recipes_by_output(json):
     return result
 
 
-CRAFTING_RECIPES_BY_OUTPUT = {} # sort_recipes_by_output(all_data["craftingRecipes"])
-SMELTING_RECIPES_BY_OUTPUT = {} # sort_recipes_by_output(all_data["smeltingRecipes"])
+CRAFTING_RECIPES_BY_OUTPUT = {}  # sort_recipes_by_output(all_data["craftingRecipes"])
+SMELTING_RECIPES_BY_OUTPUT = {}  # sort_recipes_by_output(all_data["smeltingRecipes"])
 
 ALL_PERSONAL_CRAFTING_ITEMS = [
-                                  "none",  # empty inventory slot (for obs); take no action (for actions).
-                                  "invalid",  # item not in the list
-                              ] + [
-                                  item["type"]
-                                  for item in all_data["items"]
-                                  if item["type"] in CRAFTING_RECIPES_BY_OUTPUT.keys()
-                                     and len(CRAFTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
-                                     and all(
+    "none",  # empty inventory slot (for obs); take no action (for actions).
+    "invalid",  # item not in the list
+] + [
+    item["type"]
+    for item in all_data["items"]
+    if item["type"] in CRAFTING_RECIPES_BY_OUTPUT.keys()
+    and len(CRAFTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
+    and all(
         [
             recipe["recipeSize"] in [0, 1, 2, 4]  # TODO recipeSize needs to be 2D
             for recipe in CRAFTING_RECIPES_BY_OUTPUT[item["type"]]
         ]
     )
-                              ]
+]
 
 ALL_CRAFTING_TABLE_ITEMS = [
-                               "none",  # empty inventory slot (for obs); take no action (for actions).
-                               "invalid",  # item not in the list
-                           ] + [
-                               item["type"]
-                               for item in all_data["items"]
-                               if item["type"] in CRAFTING_RECIPES_BY_OUTPUT.keys()
-                                  and len(CRAFTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
-                                  and any(
+    "none",  # empty inventory slot (for obs); take no action (for actions).
+    "invalid",  # item not in the list
+] + [
+    item["type"]
+    for item in all_data["items"]
+    if item["type"] in CRAFTING_RECIPES_BY_OUTPUT.keys()
+    and len(CRAFTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
+    and any(
         [
             recipe["recipeSize"] <= 9
             for recipe in CRAFTING_RECIPES_BY_OUTPUT[item["type"]]
         ]
     )
-                           ]
+]
 
 ALL_SMELTING_ITEMS = [
-                         "none",  # empty inventory slot (for obs); take no action (for actions).
-                         "invalid",  # item not in the list
-                     ] + [
-                         item["type"]
-                         for item in all_data["items"]
-                         if item["type"] in SMELTING_RECIPES_BY_OUTPUT.keys()
-                            and len(SMELTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
-                     ]
+    "none",  # empty inventory slot (for obs); take no action (for actions).
+    "invalid",  # item not in the list
+] + [
+    item["type"]
+    for item in all_data["items"]
+    if item["type"] in SMELTING_RECIPES_BY_OUTPUT.keys()
+    and len(SMELTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
+]
 
 EQUIPMENT_SLOTS = [
     "mainhand",
@@ -663,7 +670,10 @@ EQUIPMENT_SLOTS = [
 ]
 
 BEST_ITEMS_PER_EQUIPMENT_SLOT = {
-    equip: [item["type"] for item in all_data["items"] if item["bestEquipmentSlot"] == equip] for equip in EQUIPMENT_SLOTS
+    equip: [
+        item["type"] for item in all_data["items"] if item["bestEquipmentSlot"] == equip
+    ]
+    for equip in EQUIPMENT_SLOTS
 }
 
 
@@ -703,14 +713,16 @@ KEYMAP = {
 def strip_item_prefix(minecraft_name):
     # Names in minecraft start with 'minecraft:', like:
     # 'minecraft:log', or 'minecraft:cobblestone'
-    if minecraft_name.startswith('minecraft:'):
-        return minecraft_name[len('minecraft:'):]
+    if minecraft_name.startswith("minecraft:"):
+        return minecraft_name[len("minecraft:") :]
 
     return minecraft_name
 
 
-def minerec_to_minerl_action(minerec_action, next_action=None, gui_camera_scaler=1.0, esc_to_inventory=True):
-    '''
+def minerec_to_minerl_action(
+    minerec_action, next_action=None, gui_camera_scaler=1.0, esc_to_inventory=True
+):
+    """
     Convert minerec action into minerl action.
     :param minerec_action: action in minerec format
     :param next_action: next action (optional). If not None, camera is inferred by difference
@@ -720,14 +732,17 @@ def minerec_to_minerl_action(minerec_action, next_action=None, gui_camera_scaler
                                recorder (should be set to 0.5)
     :param esc_to_inventory: if True, map ESC key presses to inventory (e) when gui is open.
     :returns action in minerl format
-    '''
+    """
     ac = {v: 0 for v in KEYMAP.values()}
     ac["camera"] = np.zeros(2)
     # Requires current action mouse and keyboard to be present, as well as next action mouse
     # (if next action is provided at all). Otherwise, returns a noop action.
-    if minerec_action.get("mouse") is None or minerec_action.get("keyboard") is None or \
-       (next_action is not None and next_action.get("mouse") is None):
-            return ac
+    if (
+        minerec_action.get("mouse") is None
+        or minerec_action.get("keyboard") is None
+        or (next_action is not None and next_action.get("mouse") is None)
+    ):
+        return ac
 
     keys_pressed = set()
     keys_pressed.update(minerec_action["keyboard"]["keys"])
@@ -735,23 +750,28 @@ def minerec_to_minerl_action(minerec_action, next_action=None, gui_camera_scaler
     ac["camera"] = mouse_to_camera(minerec_action["mouse"])
 
     for key, keyac in KEYMAP.items():
-        if keyac == 'ESC' and minerec_action['isGuiOpen'] and esc_to_inventory and key in keys_pressed:
-            keyac = 'inventory'
+        if (
+            keyac == "ESC"
+            and minerec_action["isGuiOpen"]
+            and esc_to_inventory
+            and key in keys_pressed
+        ):
+            keyac = "inventory"
         ac[keyac] = int(key in keys_pressed)
-    if minerec_action['isGuiOpen']:
+    if minerec_action["isGuiOpen"]:
         ac["camera"] *= gui_camera_scaler
 
     # if next_action is provided, camera action can be inferred more accurately
     # based on next action. Also, next action allows us to convert scroll
     # into hotbar actions
     if next_action is not None:
-        if not minerec_action['isGuiOpen']:
+        if not minerec_action["isGuiOpen"]:
             # if gui is not open, then camera action affects (and can be inferred from)
             # rotation angles of the agent
             dpitch = next_action["pitch"] - minerec_action["pitch"]
             dyaw = next_action["yaw"] - minerec_action["yaw"]
             ac["camera"] = np.array([dpitch, dyaw])
-        elif next_action['isGuiOpen']:
+        elif next_action["isGuiOpen"]:
             # OTOH, if GUI is open in both current and next step,
             # camera action moves mouse, so it can be inferred from difference of mouse
             # positions.
@@ -763,12 +783,24 @@ def minerec_to_minerl_action(minerec_action, next_action=None, gui_camera_scaler
                 # scaledX and scaledY report coordinates scaled by guiScale, and as such, are not
                 # affected if player were to switch to a full screen mode. We use them if
                 # available (recordings with newer minerec version)...
-                dpitch = (next_action["mouse"]["scaledY"] - minerec_action["mouse"]["scaledY"]) * CAMERA_SCALER
-                dyaw = (next_action["mouse"]["scaledX"] - minerec_action["mouse"]["scaledX"]) * CAMERA_SCALER
+                dpitch = (
+                    next_action["mouse"]["scaledY"] - minerec_action["mouse"]["scaledY"]
+                ) * CAMERA_SCALER
+                dyaw = (
+                    next_action["mouse"]["scaledX"] - minerec_action["mouse"]["scaledX"]
+                ) * CAMERA_SCALER
             else:
                 # ... otherwise, we assume guiScale at recording == 2
-                dpitch = (next_action["mouse"]["y"] - minerec_action["mouse"]["y"]) / 2 * CAMERA_SCALER
-                dyaw = (next_action["mouse"]["x"] - minerec_action["mouse"]["x"])  / 2 * CAMERA_SCALER
+                dpitch = (
+                    (next_action["mouse"]["y"] - minerec_action["mouse"]["y"])
+                    / 2
+                    * CAMERA_SCALER
+                )
+                dyaw = (
+                    (next_action["mouse"]["x"] - minerec_action["mouse"]["x"])
+                    / 2
+                    * CAMERA_SCALER
+                )
             ac["camera"] = np.array([dpitch, dyaw])
         if "hotbar" in next_action:
             # if hotbar state is available, use to to infer hotbar presses
@@ -779,16 +811,18 @@ def minerec_to_minerl_action(minerec_action, next_action=None, gui_camera_scaler
             ac["dwheel"] = minerec_action["mouse"]["dwheel"]
     return ac
 
+
 # NOTE camera actions are ordered as "pitch" (vertical angle), "yaw" (horizontal angle)
 # hence the unusual conversion ordering
 def mouse_to_camera(mouse_ac):
-    '''
+    """
     Convert mouse movement (dx, dy) (in minerec format) into camera angles (pitch, yaw) (minerl format)
-    '''
+    """
     return CAMERA_SCALER * np.array([mouse_ac["dy"], mouse_ac["dx"]])
 
+
 def camera_to_mouse(camera_ac):
-    '''
+    """
     Convert camera angles (pitch, yaw) (minerl format) to mouse movement (dx, dy) (minerec format)
-    '''
+    """
     return {"dx": camera_ac[1] / CAMERA_SCALER, "dy": camera_ac[0] / CAMERA_SCALER}
