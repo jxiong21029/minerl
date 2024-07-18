@@ -28,6 +28,7 @@ import socket
 import struct
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -228,7 +229,7 @@ class InstanceManager:
                     status_dir = None
 
                 inst = MinecraftInstance(
-                    cls._get_valid_port(),
+                    port=cls._get_valid_port(),
                     status_dir=status_dir,
                     instance_id=instance_id,
                 )
@@ -437,15 +438,29 @@ class MinecraftInstance(object):
             if not port:
                 port = InstanceManager._get_valid_port()
 
-            # self.instance_dir = tempfile.mkdtemp()
-            # self.minecraft_dir = os.path.join(self.instance_dir, 'Minecraft')
-            # shutil.copytree(os.path.join(InstanceManager.MINECRAFT_DIR), self.minecraft_dir,
-            #                 ignore=shutil.ignore_patterns('cache.properties.lock'))
-            # shutil.copytree(os.path.join(InstanceManager.SCHEMAS_DIR), os.path.join(self.instance_dir, 'Malmo', 'Schemas'))
-            self.minecraft_dir = InstanceManager.MINECRAFT_DIR
-            self.instance_dir = os.path.join(
-                InstanceManager.MINECRAFT_DIR, ".."
+            # This variant copies MCP-Reborn and Malmo Schema to a temporary
+            # directory (probably in /tmp) and runs environment from there
+            self.instance_tempdir = tempfile.TemporaryDirectory()
+            self.instance_dir = self.instance_tempdir.name
+
+            self.minecraft_dir = os.path.join(self.instance_dir, "MCP-Reborn")
+            shutil.copytree(
+                os.path.join(InstanceManager.MINECRAFT_DIR),
+                self.minecraft_dir,
+                ignore=shutil.ignore_patterns("cache.properties.lock"),
             )
+            shutil.copytree(
+                os.path.join(InstanceManager.SCHEMAS_DIR),
+                os.path.join(self.instance_dir, "Malmo", "Schemas"),
+            )
+
+            # Original variant simply runs in original MCP-Reborn directory,
+            # which can run into issues e.g. over NFS filesystems
+
+            # self.minecraft_dir = InstanceManager.MINECRAFT_DIR
+            # self.instance_dir = os.path.join(
+            #     InstanceManager.MINECRAFT_DIR, ".."
+            # )
 
             # 0. Get PID of launcher.
             parent_pid = os.getpid()
@@ -590,7 +605,6 @@ class MinecraftInstance(object):
         Kills the process (if it has been launched.)
         """
         self._destruct()
-        pass
 
     def close(self):
         """Closes the object."""
@@ -677,7 +691,7 @@ class MinecraftInstance(object):
         )
         minecraft_process = psutil.Popen(
             cmd,
-            cwd=InstanceManager.MINECRAFT_DIR,
+            cwd=minecraft_dir,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -742,7 +756,9 @@ class MinecraftInstance(object):
             if self in InstanceManager._instance_pool:
                 InstanceManager._instance_pool.remove(self)
                 self.release_lock()
-        pass
+
+            # (jerry) cleanup instance temp directory
+            self.instance_tempdir.cleanup()
 
     def __repr__(self):
         return "Malmo[{}:{}, proc={}, addr={}:{}, locked={}]".format(
