@@ -3,11 +3,13 @@
 
 """Launches a minecraft instance using the instance manager on a specified port."""
 
-from minerl.env.malmo import InstanceManager, MinecraftInstance
 import argparse
 import logging
 import time
+
 import coloredlogs
+
+from minerl.env.malmo import MinecraftInstance
 
 coloredlogs.install(logging.DEBUG)
 

@@ -16,36 +16,31 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # ------------------------------------------------------------------------------------------------
+import argparse
 import atexit
+import collections
 import functools
 import locale
 import logging
-import multiprocessing
 import os
-import traceback
-import pathlib
-import Pyro4.core
-import argparse
-from enum import IntEnum
-
 import shutil
 import socket
 import struct
-import collections
 import subprocess
 import sys
-import tempfile
 import threading
 import time
-from contextlib import contextmanager
-
 import uuid
+from contextlib import contextmanager
+from enum import IntEnum
+from random import Random
+
 import psutil
 import Pyro4
+import Pyro4.core
 
-from random import Random
-from minerl.env import comms
 import minerl.utils.process_watcher
+from minerl.env import comms
 
 logger = logging.getLogger(__name__)
 
@@ -282,7 +277,7 @@ class InstanceManager:
                 time.sleep(InstanceManager.KEEP_ALIVE_PYRO_FREQUENCY)
                 try:
                     keep_alive_proxy.call()
-                except:
+                except Exception:
                     bad_insts = [
                         inst for inst in cls._instance_pool if inst.owner == client_pid
                     ]
@@ -292,7 +287,7 @@ class InstanceManager:
         keep_alive_thread = threading.Thread(
             target=check_client_connected, args=(_pid, _callback)
         )
-        keep_alive_thread.setDaemon(True)
+        keep_alive_thread.daemon = True
         keep_alive_thread.start()
 
     @staticmethod
@@ -401,7 +396,7 @@ class MinecraftInstance(object):
         # Try to set the seed for the instance using the instance manager's override.
         try:
             seed = InstanceManager._get_next_seed(instance_id)
-        except TypeError as e:
+        except TypeError:
             pass
         finally:
             # Even if the Instance manager does not override
@@ -450,7 +445,6 @@ class MinecraftInstance(object):
             # wait until Minecraft process has outputed "CLIENT enter state: DORMANT"
             lines = []
             client_ready = False
-            server_ready = False
 
             while True:
                 mine_log_encoding = locale.getpreferredencoding(False)
@@ -465,8 +459,8 @@ class MinecraftInstance(object):
                     # IF THERE WAS AN ERROR STARTING THE MC PROCESS
                     # Print the whole logs!
                     error_str = ""
-                    for l in lines:
-                        spline = "\n".join(l.split("\n")[:-1])
+                    for lne in lines:
+                        spline = "\n".join(lne.split("\n")[:-1])
                         self._logger.error(spline)
                         error_str += spline + "\n"
                     # Throw an exception!
@@ -484,7 +478,7 @@ class MinecraftInstance(object):
                     self._port = int(line.split(MALMOENVPORTSTR)[-1].strip())
 
                 client_ready = "CLIENT enter state: DORMANT" in line
-                server_ready = "SERVER enter state: DORMANT" in line
+                # server_ready = "SERVER enter state: DORMANT" in line
 
                 if client_ready:
                     break
@@ -511,7 +505,9 @@ class MinecraftInstance(object):
                     os.makedirs((os.path.join(logdir, "logs")))
 
                 file_path = os.path.join(
-                    logdir, "logs", "mc_{}.log".format(self._target_port - 9000)
+                    logdir,
+                    "logs",
+                    "mc_{}.log".format(self._target_port - 9000),
                 )
 
                 logger.info("Logging output of Minecraft to {}".format(file_path))
@@ -548,7 +544,7 @@ class MinecraftInstance(object):
             self._logger_thread = threading.Thread(
                 target=functools.partial(log_to_file, logdir=logdir)
             )
-            self._logger_thread.setDaemon(True)
+            self._logger_thread.daemon = True
             self._logger_thread.start()
 
         else:
@@ -749,10 +745,10 @@ class MinecraftInstance(object):
             or "Exception" in msg
             or "    at " in msg
             or msg.startswith("Error")
-        ) and (not "connection closed, likely by peer" in msg):
+        ) and ("connection closed, likely by peer" not in msg):
             self._logger.error(msg)
         elif "WARN" in msg:
-            self._logger.warn(msg)
+            self._logger.warning(msg)
         elif "LOGTOPY" in msg:
             self._logger.info(msg)
         else:
@@ -818,7 +814,7 @@ def launch_queue_logger_thread(output_producer, should_end):
     thread = threading.Thread(
         target=queue_logger_thread, args=(output_producer, should_end)
     )
-    thread.setDaemon(True)
+    thread.daemon = True
     thread.start()
 
 
@@ -828,7 +824,10 @@ def launch_instance_manager():
     # pyro4-ns
     parser = argparse.ArgumentParser("python3 launch_instance_manager.py")
     parser.add_argument(
-        "--seeds", type=str, default=None, help="The default seed for the environment."
+        "--seeds",
+        type=str,
+        default=None,
+        help="The default seed for the environment.",
     )
     parser.add_argument(
         "--seeding_type",
@@ -855,7 +854,7 @@ def launch_instance_manager():
         print("Removing the performance directory!")
         try:
             shutil.rmtree(InstanceManager.STATUS_DIR)
-        except:
+        except Exception:
             pass
         finally:
             if not os.path.exists(InstanceManager.STATUS_DIR):
@@ -913,5 +912,5 @@ if os.getenv(MINERL_INSTANCE_MANAGER_REMOTE):
         daemon.requestLoop()
 
     thread = threading.Thread(target=keep_alive_pyro)
-    thread.setDaemon(True)
+    thread.daemon = True
     thread.start()

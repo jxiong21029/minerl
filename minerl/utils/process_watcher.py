@@ -1,17 +1,16 @@
 # Copyright (c) 2020 All Rights Reserved
 # Author: William H. Guss, Brandon Houghton
 
-import coloredlogs
 import argparse
-import psutil
-import time
-import shutil
 import logging
-import psutil
-import subprocess
 import os
+import shutil
+import subprocess
 import sys
-import signal
+import time
+
+import coloredlogs
+import psutil
 from daemoniker import daemonize
 
 logger = logging.getLogger("process_watcher")
@@ -179,7 +178,8 @@ if __name__ == "__main__":
     coloredlogs.install(
         level=logging.DEBUG,
         stream=open(
-            os.path.join(os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".log"), "w"
+            os.path.join(os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".log"),
+            "w",
         ),
     )
 
