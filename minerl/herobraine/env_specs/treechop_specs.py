@@ -1,7 +1,9 @@
 # Copyright (c) 2020 All Rights Reserved
 # Author: William H. Guss, Brandon Houghton
 
-from minerl.herobraine.env_specs.human_controls import SimpleHumanEmbodimentEnvSpec
+from minerl.herobraine.env_specs.human_controls import (
+    SimpleHumanEmbodimentEnvSpec,
+)
 from minerl.herobraine.hero.mc import MS_PER_STEP, STEPS_PER_MS
 from minerl.herobraine.hero.handler import Handler
 from typing import List
@@ -40,7 +42,10 @@ class Treechop(SimpleHumanEmbodimentEnvSpec):
             kwargs["name"] = "MineRLTreechop-v0"
 
         super().__init__(
-            *args, max_episode_steps=TREECHOP_LENGTH, reward_threshold=64.0, **kwargs
+            *args,
+            max_episode_steps=TREECHOP_LENGTH,
+            reward_threshold=64.0,
+            **kwargs,
         )
 
     def create_rewardables(self) -> List[Handler]:
@@ -54,16 +59,21 @@ class Treechop(SimpleHumanEmbodimentEnvSpec):
 
     def create_agent_start(self) -> List[Handler]:
         return super().create_agent_start() + [
-            handlers.SimpleInventoryAgentStart([dict(type="iron_axe", quantity=1)])
+            handlers.SimpleInventoryAgentStart(
+                [dict(type="iron_axe", quantity=1)]
+            )
         ]
 
     def create_agent_handlers(self) -> List[Handler]:
-        return [handlers.AgentQuitFromPossessingItem([dict(type="log", amount=64)])]
+        return [
+            handlers.AgentQuitFromPossessingItem([dict(type="log", amount=64)])
+        ]
 
     def create_server_world_generators(self) -> List[Handler]:
         return [
             handlers.DefaultWorldGenerator(
-                force_reset="true", generator_options=TREECHOP_WORLD_GENERATOR_OPTIONS
+                force_reset="true",
+                generator_options=TREECHOP_WORLD_GENERATOR_OPTIONS,
             )
         ]
 

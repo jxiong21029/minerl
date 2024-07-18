@@ -106,12 +106,16 @@ class _EquippedItemObservation(TranslationHandlerGroup):
     def to_string(self) -> str:
         return "_".join([str(k) for k in self.keys])
 
-    def __init__(self, dict_keys: List[str], items: List[str], _default, _other):
+    def __init__(
+        self, dict_keys: List[str], items: List[str], _default, _other
+    ):
         self.keys = dict_keys
 
         super().__init__(
             handlers=[
-                _TypeObservation(self.keys, items, _default=_default, _other=_other),
+                _TypeObservation(
+                    self.keys, items, _default=_default, _other=_other
+                ),
                 _DamageObservation(self.keys, type_str="damage"),
                 _DamageObservation(self.keys, type_str="maxDamage"),
             ]
@@ -125,7 +129,9 @@ class _TypeObservation(TranslationHandler):
     # TODO (R): Update this dcoumentation
     """
 
-    def __init__(self, keys: List[str], items: list, _default: str, _other: str):
+    def __init__(
+        self, keys: List[str], items: list, _default: str, _other: str
+    ):
         """
         Initializes the space of the handler with a spaces.Dict
         of all of the spaces for each individual command.
@@ -167,9 +173,9 @@ class _TypeObservation(TranslationHandler):
                 ):
                     offset -= 1
 
-                item_name = obs["slots"]["gui"]["slots"][offset + hotbar_index][
-                    "name"
-                ].split("minecraft:")[-1]
+                item_name = obs["slots"]["gui"]["slots"][
+                    offset + hotbar_index
+                ]["name"].split("minecraft:")[-1]
                 if not item_name in self._items:
                     raise ValueError()
                 if item_name == "air":
@@ -245,7 +251,9 @@ class _DamageObservation(TranslationHandler):
                 ):
                     offset -= 1
                 return np.array(
-                    obs["slots"]["gui"]["slots"][offset + hotbar_index][self.type_str],
+                    obs["slots"]["gui"]["slots"][offset + hotbar_index][
+                        self.type_str
+                    ],
                     dtype=np.int32,
                 )
             else:

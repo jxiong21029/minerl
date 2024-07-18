@@ -16,8 +16,12 @@ coloredlogs.install(logging.DEBUG)
 
 def parse_args():
     # Get a port to launch the instance on.
-    parser = argparse.ArgumentParser(description="Launch a minecraft instance.")
-    parser.add_argument("port", type=int, help="The port to launch the instance on.")
+    parser = argparse.ArgumentParser(
+        description="Launch a minecraft instance."
+    )
+    parser.add_argument(
+        "port", type=int, help="The port to launch the instance on."
+    )
     parser.add_argument(
         "--keep_alive",
         action="store_true",

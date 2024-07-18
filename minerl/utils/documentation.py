@@ -18,7 +18,9 @@ def _gym_space_to_dict(space: Union[dict, gym.Space]) -> dict:
 
 def _format_dict(arg: dict) -> str:
     arg = {":ref:`{} <{}>`".format(k, k): arg[k] for k in arg}
-    json_obj = json.dumps(arg, sort_keys=True, indent=8, default=lambda o: str(o))
+    json_obj = json.dumps(
+        arg, sort_keys=True, indent=8, default=lambda o: str(o)
+    )
     json_obj = json_obj[:-1] + "    })"
     return f".. parsed-literal:: \n\n    Dict({json_obj}\n\n\n"
 

@@ -142,7 +142,8 @@ def test_acitons():
 
 def test_wrapped_obf_env():
     return test_wrapped_env(
-        environment="MineRLObtainTest-v0", wrapped_env="MineRLObtainTestVectorObf-v0"
+        environment="MineRLObtainTest-v0",
+        wrapped_env="MineRLObtainTestVectorObf-v0",
     )
 
 
@@ -167,7 +168,9 @@ def test_wrapped_env(
         _, _, _, _ = env.step(action)
         _, _, _, _ = wenv.step(waction)
         obs, _, _, _ = env.step(env.action_space.no_op())
-        wobs, _, _, _ = wenv.step(wenv.env_spec.wrap_action(env.action_space.no_op()))
+        wobs, _, _, _ = wenv.step(
+            wenv.env_spec.wrap_action(env.action_space.no_op())
+        )
 
         unwobsed = wenv.env_spec.unwrap_observation(wobs)
         del obs["pov"]
@@ -188,7 +191,9 @@ def test_wrapped_env(
                     )
 
             obs, reward, done, info = env.step(action)
-            wobs, wreward, wdone, winfo = wenv.step(wenv.env_spec.wrap_action(action))
+            wobs, wreward, wdone, winfo = wenv.step(
+                wenv.env_spec.wrap_action(action)
+            )
 
             # Check the wraped env agrees
             assert reward == wreward
@@ -234,7 +239,9 @@ def test_env(environment="MineRLObtainTest-v0", interactive=False):
         obs, _, _, _ = env.step(env.action_space.no_op())
         assert (
             obs["equipped_items"]["mainhand"]["type"] == "other"
-        ), "{} is not of type other".format(obs["equipped_items"]["mainhand"]["type"])
+        ), "{} is not of type other".format(
+            obs["equipped_items"]["mainhand"]["type"]
+        )
 
         for action in gen_obtain_debug_actions(env):
             for key, value in action.items():

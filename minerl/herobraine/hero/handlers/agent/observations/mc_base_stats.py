@@ -53,7 +53,9 @@ class _FullStatsObservation(KeymapTranslationHandler):
             x = x[key]
         return x
 
-    def __init__(self, key_list: List[str], space=None, default_if_missing=None):
+    def __init__(
+        self, key_list: List[str], space=None, default_if_missing=None
+    ):
         if space is None:
             if "achievement" == key_list[0]:
                 space = spaces.Box(low=0, high=1, shape=(), dtype=int)

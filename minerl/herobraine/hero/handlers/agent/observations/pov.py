@@ -6,7 +6,9 @@ import logging
 import warnings
 
 import jinja2
-from minerl.herobraine.hero.handlers.translation import KeymapTranslationHandler
+from minerl.herobraine.hero.handlers.translation import (
+    KeymapTranslationHandler,
+)
 from minerl.herobraine.hero import spaces
 from typing import Tuple
 import numpy as np
@@ -30,7 +32,9 @@ class POVObservation(KeymapTranslationHandler):
             </VideoProducer>"""
         )
 
-    def __init__(self, video_resolution: Tuple[int, int], include_depth: bool = False):
+    def __init__(
+        self, video_resolution: Tuple[int, int], include_depth: bool = False
+    ):
         self.include_depth = include_depth
         self.video_resolution = video_resolution
 
@@ -58,12 +62,13 @@ class POVObservation(KeymapTranslationHandler):
 
         if pov is None or len(pov) == 0:
             pov = np.zeros(
-                (self.video_height, self.video_width, self.video_depth), dtype=np.uint8
+                (self.video_height, self.video_width, self.video_depth),
+                dtype=np.uint8,
             )
         else:
-            pov = pov.reshape((self.video_height, self.video_width, self.video_depth))[
-                ::-1, :, :
-            ]
+            pov = pov.reshape(
+                (self.video_height, self.video_width, self.video_depth)
+            )[::-1, :, :]
 
         return pov
 

@@ -124,7 +124,9 @@ class TranslationHandlerGroup(TranslationHandler):
 
         return {h.to_string(): h.from_hero(x) for h in self.handlers}
 
-    def from_universal(self, x: typing.Dict[str, Any]) -> typing.Dict[str, Any]:
+    def from_universal(
+        self, x: typing.Dict[str, Any]
+    ) -> typing.Dict[str, Any]:
         """Performs the same operation as from_hero except with from_universal."""
         return {h.to_string(): h.from_universal(x) for h in self.handlers}
 

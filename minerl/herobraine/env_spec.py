@@ -42,7 +42,8 @@ class EnvSpec(abc.ABC):
         self.agent_count = 1 if agent_count is None else agent_count
         self.is_single_agent = agent_count is None
         self.agent_names = [
-            "agent_{role}".format(role=role) for role in range(self.agent_count)
+            "agent_{role}".format(role=role)
+            for role in range(self.agent_count)
         ]
 
         self.reset()
@@ -56,7 +57,9 @@ class EnvSpec(abc.ABC):
         self.agent_handlers = self.create_agent_handlers()
         self.monitors = self.create_monitors()
 
-        self.server_initial_conditions = self.create_server_initial_conditions()
+        self.server_initial_conditions = (
+            self.create_server_initial_conditions()
+        )
         self.server_world_generators = self.create_server_world_generators()
         self.server_decorators = self.create_server_decorators()
         self.server_quit_producers = self.create_server_quit_producers()
@@ -91,7 +94,9 @@ class EnvSpec(abc.ABC):
         """Specifies all of the observation handlers for the env specification.
         These are used to comprise the observation space.
         """
-        raise NotImplementedError("subclasses must override create_observables()!")
+        raise NotImplementedError(
+            "subclasses must override create_observables()!"
+        )
 
     # actionables
     @abstractmethod
@@ -99,7 +104,9 @@ class EnvSpec(abc.ABC):
         """Specifies all of the action handlers for the env specification.
         These are used to comprise the action space.
         """
-        raise NotImplementedError("subclasses must override create_actionables()!")
+        raise NotImplementedError(
+            "subclasses must override create_actionables()!"
+        )
 
     # rewardables
     @abstractmethod
@@ -107,7 +114,9 @@ class EnvSpec(abc.ABC):
         """Specifies all of the reward handlers for the env specification.
         These are used to comprise the reward and are summed in the gym environment.
         """
-        raise NotImplementedError("subclasses must override create_rewardables()!")
+        raise NotImplementedError(
+            "subclasses must override create_rewardables()!"
+        )
 
     @abstractmethod
     def create_agent_start(self) -> List[Handler]:
@@ -115,7 +124,9 @@ class EnvSpec(abc.ABC):
         at the beginning of a mission. This can be used for domain randomization
         as these handlers are reinstantiated on every reset!
         """
-        raise NotImplementedError("subclasses must override create_agent_start()!")
+        raise NotImplementedError(
+            "subclasses must override create_agent_start()!"
+        )
 
     @abstractmethod
     def create_agent_handlers(self) -> List[Handler]:
@@ -132,7 +143,9 @@ class EnvSpec(abc.ABC):
         Returns:
             List[AgentHandler]: [description]
         """
-        raise NotImplementedError("subclasses must override create_agent_handlers()!")
+        raise NotImplementedError(
+            "subclasses must override create_agent_handlers()!"
+        )
 
     @abstractmethod
     def create_monitors(self) -> List[TranslationHandler]:
@@ -146,7 +159,9 @@ class EnvSpec(abc.ABC):
 
         TODO (future): Allow monitors to accept state and action previously taken.
         """
-        raise NotImplementedError("subclasses must override create_monitors()!")
+        raise NotImplementedError(
+            "subclasses must override create_monitors()!"
+        )
 
     ##################### SERVER #########################
 
@@ -235,7 +250,9 @@ class EnvSpec(abc.ABC):
         return self._singlify(
             spaces.Dict(
                 {
-                    agent: spaces.Dict({m.to_string(): m.space for m in self.monitors})
+                    agent: spaces.Dict(
+                        {m.to_string(): m.space for m in self.monitors}
+                    )
                     for agent in self.agent_names
                 }
             )
@@ -341,7 +358,9 @@ class EnvSpec(abc.ABC):
             return ""
 
         # TODO: RAISE VALID XML ERROR. FOR EASE OF USE
-        trees = [etree.fromstring(xml) for xml in handler_xml_strs if xml != ""]
+        trees = [
+            etree.fromstring(xml) for xml in handler_xml_strs if xml != ""
+        ]
         consolidated_trees = {tree.tag: tree for tree in trees}.values()
 
         return [

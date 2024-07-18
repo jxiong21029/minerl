@@ -108,7 +108,9 @@ class RemoteServer(Handler):
         if callable(address):
             address = address()
         if not isinstance(address, str):
-            raise ValueError(f"address should be a string (provided {address})")
+            raise ValueError(
+                f"address should be a string (provided {address})"
+            )
         return f"<RemoteServer>{address}</RemoteServer>"
 
     def to_string(self) -> str:

@@ -2,7 +2,9 @@
 # Author: William H. Guss, Brandon Houghton
 
 from minerl.herobraine.hero.mc import MS_PER_STEP, STEPS_PER_MS
-from minerl.herobraine.env_specs.simple_embodiment import SimpleEmbodimentEnvSpec
+from minerl.herobraine.env_specs.simple_embodiment import (
+    SimpleEmbodimentEnvSpec,
+)
 from minerl.herobraine.hero.handler import Handler
 import sys
 from typing import List
@@ -22,7 +24,11 @@ class Navigate(SimpleEmbodimentEnvSpec):
         super().__init__(name, *args, max_episode_steps=6000, **kwargs)
 
     def is_from_folder(self, folder: str) -> bool:
-        return folder == "navigateextreme" if self.extreme else folder == "navigate"
+        return (
+            folder == "navigateextreme"
+            if self.extreme
+            else folder == "navigate"
+        )
 
     def create_observables(self) -> List[Handler]:
         return super().create_observables() + [
@@ -32,7 +38,9 @@ class Navigate(SimpleEmbodimentEnvSpec):
 
     def create_actionables(self) -> List[Handler]:
         return super().create_actionables() + [
-            handlers.PlaceBlock(["none", "dirt"], _other="none", _default="none")
+            handlers.PlaceBlock(
+                ["none", "dirt"], _other="none", _default="none"
+            )
         ]
 
     # john rl nyu microsfot van roy and ian osband
@@ -41,18 +49,28 @@ class Navigate(SimpleEmbodimentEnvSpec):
         return [
             handlers.RewardForTouchingBlockType(
                 [
-                    {"type": "diamond_block", "behaviour": "onceOnly", "reward": 100.0},
+                    {
+                        "type": "diamond_block",
+                        "behaviour": "onceOnly",
+                        "reward": 100.0,
+                    },
                 ]
             )
         ] + (
-            [handlers.RewardForDistanceTraveledToCompassTarget(reward_per_block=1.0)]
+            [
+                handlers.RewardForDistanceTraveledToCompassTarget(
+                    reward_per_block=1.0
+                )
+            ]
             if self.dense
             else []
         )
 
     def create_agent_start(self) -> List[Handler]:
         return [
-            handlers.SimpleInventoryAgentStart([dict(type="compass", quantity="1")])
+            handlers.SimpleInventoryAgentStart(
+                [dict(type="compass", quantity="1")]
+            )
         ]
 
     def create_agent_handlers(self) -> List[Handler]:
@@ -87,7 +105,9 @@ class Navigate(SimpleEmbodimentEnvSpec):
 
     def create_server_initial_conditions(self) -> List[Handler]:
         return [
-            handlers.TimeInitialCondition(allow_passage_of_time=False, start_time=6000),
+            handlers.TimeInitialCondition(
+                allow_passage_of_time=False, start_time=6000
+            ),
             handlers.WeatherInitialCondition("clear"),
             handlers.SpawningInitialCondition("false"),
         ]
@@ -131,13 +151,9 @@ The agent is given a sparse reward (+100 upon reaching the goal, at which point 
         navigate_text += "**This variant of the environment is sparse.**\n"
 
     if top == "normal":
-        navigate_text += (
-            "\nIn this environment, the agent spawns on a random survival map.\n"
-        )
+        navigate_text += "\nIn this environment, the agent spawns on a random survival map.\n"
         navigate_text = navigate_text.format(*["" for _ in range(4)])
     else:
-        navigate_text += (
-            "\nIn this environment, the agent spawns in an extreme hills biome.\n"
-        )
+        navigate_text += "\nIn this environment, the agent spawns in an extreme hills biome.\n"
         navigate_text = navigate_text.format(*["extreme" for _ in range(4)])
     return navigate_text

@@ -31,7 +31,9 @@ class SmeltItemNearby(CraftAction):
         ):
             try:
                 x = self._univ_items.index(obs["diff"]["smelted"][0]["item"])
-                return obs["diff"]["smelted"][0]["item"].split("minecraft:")[-1]
+                return obs["diff"]["smelted"][0]["item"].split("minecraft:")[
+                    -1
+                ]
             except ValueError:
                 return self._default
                 # return self._items.index('other')

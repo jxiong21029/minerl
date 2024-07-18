@@ -57,7 +57,9 @@ def test_obf_wrapper(
         assert us in base_env.observation_space
 
 
-def test_wrap_unwrap_action(base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_envs=None):
+def test_wrap_unwrap_action(
+    base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_envs=None
+):
     """
     Tests that wrap_action composed with unwrap action is the identity.
     1. Construct an VecWrapper of an EnvSpec called ObtainDiamond
@@ -113,10 +115,14 @@ def test_wrap_unwrap_observation_treechop():
 
 
 def test_wrap_unwrap_observation_navigate():
-    test_wrap_unwrap_observation(base_env=envs.MINERL_NAVIGATE_DENSE_EXTREME_V0)
+    test_wrap_unwrap_observation(
+        base_env=envs.MINERL_NAVIGATE_DENSE_EXTREME_V0
+    )
 
 
-def test_vector_action_space(base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_env=None):
+def test_vector_action_space(
+    base_env=envs.MINERL_OBTAIN_DIAMOND_V0, common_env=None
+):
     vec_env = wrappers.Vectorized(base_env, common_env)
     assert isinstance(vec_env.action_space, Dict)
     assert isinstance(vec_env.observation_space, Dict)

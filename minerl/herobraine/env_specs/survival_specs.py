@@ -1,6 +1,8 @@
 # Copyright (c) 2020 All Rights Reserved
 # Author: William H. Guss, Brandon Houghton
-from minerl.herobraine.env_specs.simple_embodiment import SimpleEmbodimentEnvSpec
+from minerl.herobraine.env_specs.simple_embodiment import (
+    SimpleEmbodimentEnvSpec,
+)
 from minerl.herobraine.hero.handler import Handler
 from typing import List
 
@@ -54,7 +56,9 @@ class Survival(SimpleEmbodimentEnvSpec):
 
     def create_server_world_generators(self) -> List[Handler]:
         return [
-            handlers.DefaultWorldGenerator(force_reset="true", generator_options="")
+            handlers.DefaultWorldGenerator(
+                force_reset="true", generator_options=""
+            )
         ]
 
     def create_server_quit_producers(self) -> List[Handler]:
@@ -68,7 +72,9 @@ class Survival(SimpleEmbodimentEnvSpec):
 
     def create_server_initial_conditions(self) -> List[Handler]:
         return [
-            handlers.TimeInitialCondition(allow_passage_of_time=True, start_time=0),
+            handlers.TimeInitialCondition(
+                allow_passage_of_time=True, start_time=0
+            ),
             handlers.SpawningInitialCondition(allow_spawning=True),
         ]
 
@@ -96,7 +102,9 @@ class Survival(SimpleEmbodimentEnvSpec):
         ]
 
     def create_actionables(self) -> List[Handler]:
-        actionables = [handlers.KeyboardAction(k, v) for k, v in INVERSE_KEYMAP.items()]
+        actionables = [
+            handlers.KeyboardAction(k, v) for k, v in INVERSE_KEYMAP.items()
+        ]
         actionables += [
             handlers.CraftItem(none + ALL_ITEMS),
             handlers.CraftItemNearby(none + ALL_ITEMS),

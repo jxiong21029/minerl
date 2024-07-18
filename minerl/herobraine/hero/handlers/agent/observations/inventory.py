@@ -89,7 +89,8 @@ class FlatInventoryObservation(TranslationHandler):
                 == "class net.minecraft.inventory.ContainerFurnace"
             ):
                 slots = (
-                    obs["slots"]["gui"]["slots"][0:2] + obs["slots"]["gui"]["slots"][3:]
+                    obs["slots"]["gui"]["slots"][0:2]
+                    + obs["slots"]["gui"]["slots"][3:]
                 )
             else:
                 slots = obs["slots"]["gui"]["slots"]
@@ -128,9 +129,11 @@ class FlatInventoryObservation(TranslationHandler):
         Asserts that other is also a flat observation.
         """
         assert isinstance(other, FlatInventoryObservation)
-        return FlatInventoryObservation(list(set(self.items) | (set(other.items))))
+        return FlatInventoryObservation(
+            list(set(self.items) | (set(other.items)))
+        )
 
     def __eq__(self, other):
-        return isinstance(other, FlatInventoryObservation) and (self.items) == (
-            other.items
-        )
+        return isinstance(other, FlatInventoryObservation) and (
+            self.items
+        ) == (other.items)

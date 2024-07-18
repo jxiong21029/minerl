@@ -31,7 +31,9 @@ MINERL_HUMAN_SURVIVAL_V0 = HumanSurvival()
 
 MINERL_BASALT_FIND_CAVES_ENV_SPEC = basalt_specs.FindCaveEnvSpec()
 MINERL_BASALT_MAKE_WATERFALL_ENV_SPEC = basalt_specs.MakeWaterfallEnvSpec()
-MINERL_BASALT_PEN_ANIMALS_VILLAGE_ENV_SPEC = basalt_specs.PenAnimalsVillageEnvSpec()
+MINERL_BASALT_PEN_ANIMALS_VILLAGE_ENV_SPEC = (
+    basalt_specs.PenAnimalsVillageEnvSpec()
+)
 MINERL_BASALT_VILLAGE_HOUSE_ENV_SPEC = basalt_specs.VillageMakeHouseEnvSpec()
 
 # Register the envs.

@@ -283,7 +283,10 @@ class _MultiAgentEnv(gym.Env):
     def step(
         self, actions
     ) -> Tuple[
-        Dict[str, Dict[str, Any]], Dict[str, float], bool, Dict[str, Dict[str, Any]]
+        Dict[str, Dict[str, Any]],
+        Dict[str, float],
+        bool,
+        Dict[str, Dict[str, Any]],
     ]:
         if not self.done:
             assert STEP_OPTIONS == 0 or STEP_OPTIONS == 2
@@ -327,16 +330,18 @@ class _MultiAgentEnv(gym.Env):
                         # TODO: REFACTOR TO USE REWARD HANDLERS INSTEAD OF MALMO REWARD.
                         done = done == 1
                         if done:
-                            logger.info("Agent {} has finished".format(actor_name))
+                            logger.info(
+                                "Agent {} has finished".format(actor_name)
+                            )
 
                         self.has_finished[actor_name] = (
                             self.has_finished[actor_name] or done
                         )
 
                         # Receive info from the environment.
-                        _malmo_json = comms.recv_message(instance.client_socket).decode(
-                            "utf-8"
-                        )
+                        _malmo_json = comms.recv_message(
+                            instance.client_socket
+                        ).decode("utf-8")
 
                         # Process the observation and done state.
                         out_obs, monitor = self._process_observation(
@@ -366,7 +371,10 @@ class _MultiAgentEnv(gym.Env):
                     )
                     logger.error(traceback.format_exc())
                     return (
-                        {agent: self.observation_space.sample() for agent in actions},
+                        {
+                            agent: self.observation_space.sample()
+                            for agent in actions
+                        },
                         {agent: 0 for agent in actions},
                         self.done,
                         {
@@ -384,7 +392,9 @@ class _MultiAgentEnv(gym.Env):
                 step_message = "<StepServer></StepServer>"
 
                 # Send Actions.
-                comms.send_message(instance.client_socket, step_message.encode())
+                comms.send_message(
+                    instance.client_socket, step_message.encode()
+                )
 
             except (socket.timeout, socket.error, TypeError) as e:
                 # If the socket times out some how! We need to catch this and reset the environment.
@@ -404,7 +414,9 @@ class _MultiAgentEnv(gym.Env):
                 time.sleep(max(0, TICK_LENGTH - (t0 - self._last_step_time)))
                 self._last_step_time = time.time()
         else:
-            raise RuntimeError("Attempted to step an environment server with done=True")
+            raise RuntimeError(
+                "Attempted to step an environment server with done=True"
+            )
 
         #  WE DON'T CURRENTLY PIPE OUT WHETHER EACH AGENT IS DONE
         # JUST IF EVERY AGENT IS DONE. THIS CAN BE ASCERTAINED BY
@@ -475,7 +487,9 @@ class _MultiAgentEnv(gym.Env):
 
             # Episodic state variables
             self.done = False
-            self.has_finished = {agent: False for agent in self.task.agent_names}
+            self.has_finished = {
+                agent: False for agent in self.task.agent_names
+            }
 
             # Start the Mission/Task, by sending the master mission XML over
             # the pipe to these instances, and  update the agent xmls to get
@@ -490,13 +504,19 @@ class _MultiAgentEnv(gym.Env):
                 )
                 # update slave instnaces xmls with the server port and IP and setup their missions.
                 for slave_instance, slave_xml, role in list(
-                    zip(self.instances, agent_xmls, range(1, self.task.agent_count + 1))
+                    zip(
+                        self.instances,
+                        agent_xmls,
+                        range(1, self.task.agent_count + 1),
+                    )
                 )[1:]:
                     self._setup_slave_master_connection_info(
                         slave_xml, mc_server_ip, mc_server_port
                     )
                     self._send_mission(
-                        slave_instance, slave_xml, self._get_token(role, ep_uid)
+                        slave_instance,
+                        slave_xml,
+                        self._get_token(role, ep_uid),
                     )
 
             # Finally, peek all of the observations.
@@ -562,7 +582,9 @@ class _MultiAgentEnv(gym.Env):
                     <HumanInteraction>
                         <Port>{}</Port>
                         <MaxPlayers>{}</MaxPlayers>
-                    </HumanInteraction>""".format(self.interact_port, self.max_players)
+                    </HumanInteraction>""".format(
+                        self.interact_port, self.max_players
+                    )
                 )
                 # Update the xml
                 namespace = "{http://ProjectMalmo.microsoft.com}"
@@ -573,7 +595,9 @@ class _MultiAgentEnv(gym.Env):
             xml_dict = self._xml_mutator_to_be_deprecated(
                 xmltodict.parse(etree.tostring(agent_xml_etree))
             )
-            agent_xml_etree = etree.fromstring(xmltodict.unparse(xml_dict).encode())
+            agent_xml_etree = etree.fromstring(
+                xmltodict.unparse(xml_dict).encode()
+            )
 
             agent_xmls.append(agent_xml_etree)
 
@@ -645,7 +669,9 @@ class _MultiAgentEnv(gym.Env):
         # init all instance missions
         ok = 0
         num_retries = 0
-        logger.debug("Sending mission init: {instance}".format(instance=instance))
+        logger.debug(
+            "Sending mission init: {instance}".format(instance=instance)
+        )
         while ok != 1:
             # roundtrip through etree to escape symbols correctly
             # and make printing pretty
@@ -672,7 +698,9 @@ class _MultiAgentEnv(gym.Env):
                 if num_retries > MAX_WAIT:
                     raise socket.timeout()
                 logger.debug(
-                    "Recieved a MALMOBUSY from {}; trying again.".format(instance)
+                    "Recieved a MALMOBUSY from {}; trying again.".format(
+                        instance
+                    )
                 )
                 time.sleep(1)
 
@@ -682,15 +710,23 @@ class _MultiAgentEnv(gym.Env):
             logger.debug("Peeking the clients.")
             peek_message = "<Peek/>"
             multi_done = True
-            for actor_name, instance in zip(self.task.agent_names, self.instances):
+            for actor_name, instance in zip(
+                self.task.agent_names, self.instances
+            ):
                 start_time = time.time()
-                comms.send_message(instance.client_socket, peek_message.encode())
+                comms.send_message(
+                    instance.client_socket, peek_message.encode()
+                )
                 obs = comms.recv_message(instance.client_socket)
-                info = comms.recv_message(instance.client_socket).decode("utf-8")
+                info = comms.recv_message(instance.client_socket).decode(
+                    "utf-8"
+                )
 
                 reply = comms.recv_message(instance.client_socket)
                 (done,) = struct.unpack("!b", reply)
-                self.has_finished[actor_name] = self.has_finished[actor_name] or done
+                self.has_finished[actor_name] = (
+                    self.has_finished[actor_name] or done
+                )
                 multi_done = multi_done and done == 1
                 if obs is None or len(obs) == 0:
                     if time.time() - start_time > MAX_WAIT:
@@ -771,7 +807,9 @@ class _MultiAgentEnv(gym.Env):
             if instance.client_socket:
                 # Try to disconnect gracefully.
                 try:
-                    comms.send_message(instance.client_socket, "<Disconnect/>".encode())
+                    comms.send_message(
+                        instance.client_socket, "<Disconnect/>".encode()
+                    )
                 except:
                     pass
                 instance.client_socket.shutdown(socket.SHUT_RDWR)
@@ -791,7 +829,9 @@ class _MultiAgentEnv(gym.Env):
             )
 
             instance.kill()
-            instance = self._get_new_instance(instance_id=self.instance.instance_id)
+            instance = self._get_new_instance(
+                instance_id=self.instance.instance_id
+            )
         else:
             instance.had_to_clean = True
 
@@ -799,7 +839,9 @@ class _MultiAgentEnv(gym.Env):
     def _TO_MOVE_create_connection(self, instance: MinecraftInstance) -> None:
         try:
             logger.debug(
-                "Creating socket connection {instance}".format(instance=instance)
+                "Creating socket connection {instance}".format(
+                    instance=instance
+                )
             )
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -814,12 +856,16 @@ class _MultiAgentEnv(gym.Env):
         except (socket.timeout, socket.error, ConnectionRefusedError) as e:
             instance.had_to_clean = True
             logger.error("Failed to reset (socket error), trying again!")
-            logger.error("Cleaning connection! Something must have gone wrong.")
+            logger.error(
+                "Cleaning connection! Something must have gone wrong."
+            )
             self._TO_MOVE_clean_connection(instance)
             self._TO_MOVE_handle_frozen_minecraft(instance)
             raise e
 
-    def _TO_MOVE_quit_current_episode(self, instance: MinecraftInstance) -> None:
+    def _TO_MOVE_quit_current_episode(
+        self, instance: MinecraftInstance
+    ) -> None:
         has_quit = False
 
         logger.info("Attempting to quit: {instance}".format(instance=instance))
@@ -843,7 +889,9 @@ class _MultiAgentEnv(gym.Env):
         tries = 0
         start_time = time.time()
 
-        logger.info("Attempting to find_ip: {instance}".format(instance=instance))
+        logger.info(
+            "Attempting to find_ip: {instance}".format(instance=instance)
+        )
         while port == 0 and time.time() - start_time <= MAX_WAIT:
             comms.send_message(sock, ("<Find>" + token + "</Find>").encode())
             reply = comms.recv_message(sock)

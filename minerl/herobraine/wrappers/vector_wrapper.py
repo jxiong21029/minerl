@@ -51,11 +51,13 @@ class Vectorized(EnvWrapper):
         self.flat_actions, self.remaining_action_space = flatten_spaces(
             self.common_actions
         )
-        self.flat_observations, self.remaining_observation_space = flatten_spaces(
-            self.common_observations
+        self.flat_observations, self.remaining_observation_space = (
+            flatten_spaces(self.common_observations)
         )
 
-        self.action_vector_len = sum(space.shape[0] for space in self.flat_actions)
+        self.action_vector_len = sum(
+            space.shape[0] for space in self.flat_actions
+        )
         self.observation_vector_len = sum(
             space.shape[0] for space in self.flat_observations
         )
@@ -76,7 +78,9 @@ class Vectorized(EnvWrapper):
         return wrapped_act
 
     def _unwrap_observation(self, obs: OrderedDict) -> OrderedDict:
-        full_obs = self.common_observation_space.unmap_mixed(obs["vector"], obs)
+        full_obs = self.common_observation_space.unmap_mixed(
+            obs["vector"], obs
+        )
         return intersect_space(self.env_to_wrap.observation_space, full_obs)
 
     def _unwrap_action(self, act: OrderedDict) -> OrderedDict:
@@ -105,7 +109,10 @@ class Vectorized(EnvWrapper):
             (
                 "vector",
                 spaces.Box(
-                    low=0.0, high=1.0, shape=[self.action_vector_len], dtype=np.float32
+                    low=0.0,
+                    high=1.0,
+                    shape=[self.action_vector_len],
+                    dtype=np.float32,
                 ),
             )
         )

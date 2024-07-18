@@ -129,7 +129,9 @@ class _SaturationObservation(LifeStatsObservation):
         super().__init__(
             hero_keys=["saturation"],
             univ_keys=["saturation"],
-            space=spaces.Box(low=0, high=mc.MAX_FOOD_SATURATION, shape=(), dtype=float),
+            space=spaces.Box(
+                low=0, high=mc.MAX_FOOD_SATURATION, shape=(), dtype=float
+            ),
             default_if_missing=5.0,
         )
 

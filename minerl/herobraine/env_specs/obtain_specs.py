@@ -57,7 +57,9 @@ class ObtainDiamondShovelWrapper(gym.Wrapper):
 
     def step(self, action: dict):
         if self.episode_over:
-            raise RuntimeError("Expected `reset` after episode terminated, not `step`.")
+            raise RuntimeError(
+                "Expected `reset` after episode terminated, not `step`."
+            )
         observation, reward, done, info = super().step(action)
         for i, [item_list, rew] in enumerate(self.rewarded_items):
             if not self.seen[i]:
@@ -94,9 +96,7 @@ def _obtain_diamond_shovel_gym_entrypoint(env_spec, fake=False):
     return env
 
 
-OBTAIN_DIAMOND_SHOVEL_ENTRY_POINT = (
-    "minerl.herobraine.env_specs.obtain_specs:_obtain_diamond_shovel_gym_entrypoint"
-)
+OBTAIN_DIAMOND_SHOVEL_ENTRY_POINT = "minerl.herobraine.env_specs.obtain_specs:_obtain_diamond_shovel_gym_entrypoint"
 
 
 class ObtainDiamondShovelEnvSpec(HumanSurvival):

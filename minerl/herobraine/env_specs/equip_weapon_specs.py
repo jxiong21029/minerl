@@ -19,7 +19,10 @@ class EquipWeapon(HumanControlEnvSpec):
             kwargs["name"] = "MineRLEquipWeapon-v0"
 
         super().__init__(
-            *args, max_episode_steps=EPISODE_LENGTH, reward_threshold=64.0, **kwargs
+            *args,
+            max_episode_steps=EPISODE_LENGTH,
+            reward_threshold=64.0,
+            **kwargs,
         )
 
     def create_rewardables(self) -> List[Handler]:
@@ -30,7 +33,9 @@ class EquipWeapon(HumanControlEnvSpec):
 
     def create_agent_start(self) -> List[Handler]:
         return super().create_agent_start() + [
-            handlers.RandomInventoryAgentStart({WEAPON: 1}, use_hotbar=self.hotbar)
+            handlers.RandomInventoryAgentStart(
+                {WEAPON: 1}, use_hotbar=self.hotbar
+            )
         ]
 
     def create_observables(self) -> List[Handler]:

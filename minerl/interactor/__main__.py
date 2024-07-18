@@ -63,10 +63,15 @@ def parse_args():
     # Single argument for the port to launch the process.
     parser = argparse.ArgumentParser(description="Connect to an agent server.")
     parser.add_argument(
-        "port", type=int, default=8888, help="The minecraft server port to connect to."
+        "port",
+        type=int,
+        default=8888,
+        help="The minecraft server port to connect to.",
     )
     # ip default localhost
-    parser.add_argument("-i", "--ip", default="127.0.0.1", help="The ip to connect to.")
+    parser.add_argument(
+        "-i", "--ip", default="127.0.0.1", help="The ip to connect to."
+    )
     parser.add_argument(
         "--debug",
         action="store_true",

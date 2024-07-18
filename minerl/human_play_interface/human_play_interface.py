@@ -40,7 +40,9 @@ MINERL_ACTION_TO_KEYBOARD = {
     "use": pyglet.window.mouse.RIGHT,
 }
 
-KEYBOARD_TO_MINERL_ACTION = {v: k for k, v in MINERL_ACTION_TO_KEYBOARD.items()}
+KEYBOARD_TO_MINERL_ACTION = {
+    v: k for k, v in MINERL_ACTION_TO_KEYBOARD.items()
+}
 
 
 # Camera actions are in degrees, while mouse movement is in pixels
@@ -58,7 +60,10 @@ class HumanPlayInterface(gym.Wrapper):
         self.env = minerl_env
         pov_shape = self.env.observation_space["pov"].shape
         self.window = pyglet.window.Window(
-            width=pov_shape[1], height=pov_shape[0], vsync=False, resizable=False
+            width=pov_shape[1],
+            height=pov_shape[0],
+            vsync=False,
+            resizable=False,
         )
         self.start_time = time.time()
         self.end_time = time.time()
@@ -116,13 +121,17 @@ class HumanPlayInterface(gym.Wrapper):
         # Make sure action has right items
         remaining_buttons = set(MINERL_ACTION_TO_KEYBOARD.keys())
         remaining_buttons.add("camera")
-        for action_name, action_space in minerl_env.action_space.spaces.items():
+        for (
+            action_name,
+            action_space,
+        ) in minerl_env.action_space.spaces.items():
             if action_name not in remaining_buttons:
                 raise RuntimeError(
                     f"Invalid MineRL action space: action {action_name} is not supported."
                 )
             elif (
-                not isinstance(action_space, spaces.Discrete) or action_space.n != 2
+                not isinstance(action_space, spaces.Discrete)
+                or action_space.n != 2
             ) and action_name != "camera":
                 raise RuntimeError(
                     f"Invalid MineRL action space: action {action_name} had space {action_space}. Only Discrete(2) is supported."
@@ -134,7 +143,10 @@ class HumanPlayInterface(gym.Wrapper):
             )
 
         obs_space = minerl_env.observation_space
-        if not isinstance(obs_space, spaces.Dict) or "pov" not in obs_space.spaces:
+        if (
+            not isinstance(obs_space, spaces.Dict)
+            or "pov" not in obs_space.spaces
+        ):
             raise RuntimeError(
                 "Invalid MineRL observation space: observation space must contain POV observation."
             )
@@ -143,7 +155,11 @@ class HumanPlayInterface(gym.Wrapper):
         self.window.switch_to()
         # Based on scaled_image_display.py
         image = pyglet.image.ImageData(
-            arr.shape[1], arr.shape[0], "RGB", arr.tobytes(), pitch=arr.shape[1] * -3
+            arr.shape[1],
+            arr.shape[0],
+            "RGB",
+            arr.tobytes(),
+            pitch=arr.shape[1] * -3,
         )
         texture = image.get_texture()
         texture.blit(0, 0)
@@ -181,7 +197,9 @@ class HumanPlayInterface(gym.Wrapper):
         return obs
 
     def step(
-        self, action: Optional[dict] = None, override_if_human_input: bool = False
+        self,
+        action: Optional[dict] = None,
+        override_if_human_input: bool = False,
     ):
         """
         Step environment for one frame.

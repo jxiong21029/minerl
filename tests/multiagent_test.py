@@ -16,7 +16,9 @@ class TreechopMultiAgentNoQuit(Treechop):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--single", action="store_true", help="use the single agent default xml"
+        "--single",
+        action="store_true",
+        help="use the single agent default xml",
     )
     parser.add_argument(
         "--port",

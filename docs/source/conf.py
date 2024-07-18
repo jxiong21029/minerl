@@ -22,7 +22,9 @@ copyright = "2020, William H. Guss, Brandon Houghton"
 author = "William H. Guss, Brandon Houghton"
 
 # The full version, including alpha/beta/rc tags
-release = "0.4.0"  # TODO(shwang): Load from minerl.version.VERSION or something
+release = (
+    "0.4.0"  # TODO(shwang): Load from minerl.version.VERSION or something
+)
 
 # -- General configuration ---------------------------------------------------
 
@@ -112,7 +114,9 @@ class ExecDirective(Directive):
         try:
             exec("\n".join(self.content))
             text = sys.stdout.getvalue()
-            lines = statemachine.string2lines(text, tab_width, convert_whitespace=True)
+            lines = statemachine.string2lines(
+                text, tab_width, convert_whitespace=True
+            )
             self.state_machine.insert_input(lines, source)
             return []
         except Exception:

@@ -32,7 +32,9 @@ class ReplayWrapper(gym.Wrapper):
     # whether replaying is active and if policy actions are ignored
     IGNORE_POLICY_ACTION = "replay_ignored_policy_action"
 
-    def __init__(self, env, replay_file, max_steps=None, replay_on_reset=False):
+    def __init__(
+        self, env, replay_file, max_steps=None, replay_on_reset=False
+    ):
         super().__init__(env)
         self.max_steps = max_steps
         self.replay_file = replay_file
@@ -134,7 +136,10 @@ class MinecraftReplayWrapper(ReplayWrapper):
         replay_on_reset=False,
     ):
         super().__init__(
-            env, replay_file, max_steps=max_steps, replay_on_reset=replay_on_reset
+            env,
+            replay_file,
+            max_steps=max_steps,
+            replay_on_reset=replay_on_reset,
         )
         self.last_info = None
         self.last_ob = None
@@ -163,7 +168,9 @@ class MinecraftReplayWrapper(ReplayWrapper):
             return True
         if self.multiagent:
             return self.is_on_trajectory_impl(
-                replay_action, self.last_ob["agent_0"], self.last_info["agent_0"]
+                replay_action,
+                self.last_ob["agent_0"],
+                self.last_info["agent_0"],
             )
         else:
             return self.is_on_trajectory_impl(
@@ -249,7 +256,11 @@ class MinecraftReplayWrapper(ReplayWrapper):
         Adjusts stats (currently, only inventory) by the amount at the end of the replay
         """
         if self.multiagent:
-            return {"agent_0": subtract_stats(ob["agent_0"], self.last_ob["agent_0"])}
+            return {
+                "agent_0": subtract_stats(
+                    ob["agent_0"], self.last_ob["agent_0"]
+                )
+            }
         else:
             return subtract_stats(ob, self.last_ob)
 
@@ -288,9 +299,9 @@ class MinecraftReplayWrapper(ReplayWrapper):
         for i in range(len(self.actions) - 1):
             a, na = self.actions[i], self.actions[i + 1]
             sprint_stat = "minecraft.custom:minecraft.sprint_one_cm"
-            if na.get("stats", {}).get(sprint_stat, 0) <= a.get("stats", {}).get(
-                sprint_stat, 0
-            ):
+            if na.get("stats", {}).get(sprint_stat, 0) <= a.get(
+                "stats", {}
+            ).get(sprint_stat, 0):
                 break
             a["keyboard"]["keys"].append("key.keyboard.left.control")
         # TODO implement boat / horse activation
@@ -306,7 +317,9 @@ class MinecraftReplayWrapper(ReplayWrapper):
             self.env.step(self.env.action_space.no_op())
             ac = self.env.action_space.no_op()
             # Open inventory or gui ...
-            ac["inventory" if replay_action.get("isGuiInventory") else "use"] = 1
+            ac[
+                "inventory" if replay_action.get("isGuiInventory") else "use"
+            ] = 1
             self.env.step(ac)
             # extra steps are needed because crafting table gui does not open
             # immediately on "use" action (only after hand swing is rendered)
@@ -337,7 +350,13 @@ def subtract_stats(ob, base_ob):
     for coord in ("xpos", "ypos", "zpos"):
         ob["location_stats"][coord] -= base_ob["location_stats"]["xpos"]
 
-    item_stats = ["pickup", "break_item", "craft_item", "use_item", "mine_block"]
+    item_stats = [
+        "pickup",
+        "break_item",
+        "craft_item",
+        "use_item",
+        "mine_block",
+    ]
 
     # the stats are always increasing, so no need to do max(0, )
     for stat in item_stats:

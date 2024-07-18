@@ -33,7 +33,10 @@ def test_merge_item_list_command_actions():
 
 def test_merge_type_observation():
     type_obs_a = _TypeObservation(
-        "test", ["none", "A", "B", "C", "D", "other"], _default="none", _other="other"
+        "test",
+        ["none", "A", "B", "C", "D", "other"],
+        _default="none",
+        _other="other",
     )
     type_obs_b = _TypeObservation(
         "test", ["none", "E", "F", "other"], _default="none", _other="other"

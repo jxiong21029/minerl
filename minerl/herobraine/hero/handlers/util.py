@@ -31,7 +31,9 @@ def error_on_malformed_item_list(
     (e.g. "planks#2" and "planks"), that special item types don't come with metadata
     constraints (e.g. "air#0" should not be valid).
     """
-    map_type_to_metadata: Dict[str, Set[Optional[int]]] = collections.defaultdict(set)
+    map_type_to_metadata: Dict[str, Set[Optional[int]]] = (
+        collections.defaultdict(set)
+    )
     for s in item_list:
         item_type, metadata = decode_item_maybe_with_metadata(s)
         if item_type in special_items and metadata is not None:

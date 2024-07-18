@@ -25,8 +25,12 @@ def parse_args():
         description="A general process watcher utility that ensures "
         "that a parent and child process terminate uniformly."
     )
-    parser.add_argument("parent_pid", type=int, help="The PID of the parent process.")
-    parser.add_argument("child_pid", type=int, help="The PID of the child process.")
+    parser.add_argument(
+        "parent_pid", type=int, help="The PID of the parent process."
+    )
+    parser.add_argument(
+        "child_pid", type=int, help="The PID of the child process."
+    )
     parser.add_argument(
         "--{}".format(CHILD_DIR_ARG),
         type=str,
@@ -67,7 +71,9 @@ def reap_process_and_children(process, timeout=5):
 
     def on_process_wait_successful(proc):
         returncode = proc.returncode if hasattr(proc, "returncode") else None
-        logger.info("Process {} terminated with exit code {}".format(proc, returncode))
+        logger.info(
+            "Process {} terminated with exit code {}".format(proc, returncode)
+        )
 
     def get_process_info(proc):
         return "{}:{}:{} i {}, owner {}".format(
@@ -77,7 +83,9 @@ def reap_process_and_children(process, timeout=5):
     procs = process.children(recursive=True)[::-1] + [process]
     try:
         logger.info(
-            "About to reap process tree of {}, ".format(get_process_info(process))
+            "About to reap process tree of {}, ".format(
+                get_process_info(process)
+            )
             + "printing process tree status in termination order:"
         )
         for p in procs:
@@ -142,7 +150,9 @@ def main(args):
             time.sleep(0.1)
 
             if not parent.is_running() or parent is None:
-                logger.info("Parent is not running, hence we need terminate the child.")
+                logger.info(
+                    "Parent is not running, hence we need terminate the child."
+                )
                 if child is not None:
                     reap_process_and_children(child)
                     try:
@@ -160,7 +170,9 @@ def main(args):
             # If you want to attempt to restart the child on failure, this
             # would be the location to do so.
             if not child.is_running():
-                logger.info("Child is not running anymore, launcher can terminate.")
+                logger.info(
+                    "Child is not running anymore, launcher can terminate."
+                )
                 return
         except KeyboardInterrupt:
             pass
@@ -173,12 +185,16 @@ if __name__ == "__main__":
     os_cur_dir = os.path.abspath(os.getcwd())
     watcher_name = "watcher_{}-{}".format(args.parent_pid, args.child_pid)
 
-    daemonize(os.path.join(os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".pid"))
+    daemonize(
+        os.path.join(os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".pid")
+    )
 
     coloredlogs.install(
         level=logging.DEBUG,
         stream=open(
-            os.path.join(os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".log"),
+            os.path.join(
+                os_cur_dir, MINERL_WATCHERS_DIR, watcher_name + ".log"
+            ),
             "w",
         ),
     )

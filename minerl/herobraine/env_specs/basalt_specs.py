@@ -82,7 +82,9 @@ class DoneOnESCWrapper(gym.Wrapper):
 
     def step(self, action):
         if self.episode_over:
-            raise RuntimeError("Expected `reset` after episode terminated, not `step`.")
+            raise RuntimeError(
+                "Expected `reset` after episode terminated, not `step`."
+            )
         observation, reward, done, info = self.env.step(action)
         done = done or bool(action["ESC"])
         self.episode_over = done
@@ -121,7 +123,9 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
         inventory: Sequence[dict] = (),
         preferred_spawn_biome: str = "plains",
     ):
-        self.inventory = inventory  # Used by minerl.util.docs to construct Sphinx docs.
+        self.inventory = (
+            inventory  # Used by minerl.util.docs to construct Sphinx docs.
+        )
         self.preferred_spawn_biome = preferred_spawn_biome
         self.demo_server_experiment_name = demo_server_experiment_name
         super().__init__(
@@ -165,7 +169,9 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
 
     def create_server_quit_producers(self) -> List[handlers.Handler]:
         return [
-            handlers.ServerQuitFromTimeUp((self.max_episode_steps * mc.MS_PER_STEP)),
+            handlers.ServerQuitFromTimeUp(
+                (self.max_episode_steps * mc.MS_PER_STEP)
+            ),
             handlers.ServerQuitWhenAnyAgentFinishes(),
         ]
 
@@ -193,7 +199,9 @@ class BasaltBaseEnvSpec(HumanControlEnvSpec):
         if equip is None:
             return f"Missing equip observation. Available keys: {list(npz_data.keys())}"
         if use is None:
-            return f"Missing use action. Available keys: {list(npz_data.keys())}"
+            return (
+                f"Missing use action. Available keys: {list(npz_data.keys())}"
+            )
 
         assert len(equip) == len(use) + 1, (len(equip), len(use))
 

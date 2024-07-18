@@ -44,6 +44,8 @@ class _SingleAgentEnv(_MultiAgentEnv):
         #             print(key)
         #             print(action[key])
         #             print(env_spec.action_space[key])
-        return all([action[key] in env_spec.action_space[key] for key in action])
+        return all(
+            [action[key] in env_spec.action_space[key] for key in action]
+        )
         # TODO validate above works as intended - below was failing for unknown reasons
         # return action in env_spec.action_space

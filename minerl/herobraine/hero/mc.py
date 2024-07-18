@@ -496,12 +496,16 @@ KEYMAP.update({str(x + 1): str(x) for x in range(1, 10)})
 # TODO: add all other keys.
 INVERSE_KEYMAP = {KEYMAP[key]: key for key in KEYMAP}
 
-MAX_LIFE = 20  # Actual max life can be greater (e.g. after eating a golden apple)
+MAX_LIFE = (
+    20  # Actual max life can be greater (e.g. after eating a golden apple)
+)
 MAX_XP = 1395  # Represents level 30 in game - bounded by signed 32 bit int max
 MAX_BREATH = 300  # Should be max encountered - subject to change by mods
 MAX_FOOD = 20  # Default max food
 MAX_FOOD_SATURATION = 20.0  # Current max saturation limit as of 1.11.2
-MAX_SCORE = 0x7FFFFF  # Implemented as XP in survival but can change e.g. mini-games
+MAX_SCORE = (
+    0x7FFFFF  # Implemented as XP in survival but can change e.g. mini-games
+)
 
 
 def get_item_id(item: str) -> int:
@@ -628,7 +632,8 @@ ALL_PERSONAL_CRAFTING_ITEMS = [
     and len(CRAFTING_RECIPES_BY_OUTPUT[item["type"]]) > 0
     and all(
         [
-            recipe["recipeSize"] in [0, 1, 2, 4]  # TODO recipeSize needs to be 2D
+            recipe["recipeSize"]
+            in [0, 1, 2, 4]  # TODO recipeSize needs to be 2D
             for recipe in CRAFTING_RECIPES_BY_OUTPUT[item["type"]]
         ]
     )
@@ -671,7 +676,9 @@ EQUIPMENT_SLOTS = [
 
 BEST_ITEMS_PER_EQUIPMENT_SLOT = {
     equip: [
-        item["type"] for item in all_data["items"] if item["bestEquipmentSlot"] == equip
+        item["type"]
+        for item in all_data["items"]
+        if item["bestEquipmentSlot"] == equip
     ]
     for equip in EQUIPMENT_SLOTS
 }
@@ -720,7 +727,10 @@ def strip_item_prefix(minecraft_name):
 
 
 def minerec_to_minerl_action(
-    minerec_action, next_action=None, gui_camera_scaler=1.0, esc_to_inventory=True
+    minerec_action,
+    next_action=None,
+    gui_camera_scaler=1.0,
+    esc_to_inventory=True,
 ):
     """
     Convert minerec action into minerl action.
@@ -746,7 +756,9 @@ def minerec_to_minerl_action(
 
     keys_pressed = set()
     keys_pressed.update(minerec_action["keyboard"]["keys"])
-    keys_pressed.update(f"mouse.{b}" for b in minerec_action["mouse"]["buttons"])
+    keys_pressed.update(
+        f"mouse.{b}" for b in minerec_action["mouse"]["buttons"]
+    )
     ac["camera"] = mouse_to_camera(minerec_action["mouse"])
 
     for key, keyac in KEYMAP.items():
@@ -784,10 +796,12 @@ def minerec_to_minerl_action(
                 # affected if player were to switch to a full screen mode. We use them if
                 # available (recordings with newer minerec version)...
                 dpitch = (
-                    next_action["mouse"]["scaledY"] - minerec_action["mouse"]["scaledY"]
+                    next_action["mouse"]["scaledY"]
+                    - minerec_action["mouse"]["scaledY"]
                 ) * CAMERA_SCALER
                 dyaw = (
-                    next_action["mouse"]["scaledX"] - minerec_action["mouse"]["scaledX"]
+                    next_action["mouse"]["scaledX"]
+                    - minerec_action["mouse"]["scaledX"]
                 ) * CAMERA_SCALER
             else:
                 # ... otherwise, we assume guiScale at recording == 2
@@ -825,4 +839,7 @@ def camera_to_mouse(camera_ac):
     """
     Convert camera angles (pitch, yaw) (minerl format) to mouse movement (dx, dy) (minerec format)
     """
-    return {"dx": camera_ac[1] / CAMERA_SCALER, "dy": camera_ac[0] / CAMERA_SCALER}
+    return {
+        "dx": camera_ac[1] / CAMERA_SCALER,
+        "dy": camera_ac[0] / CAMERA_SCALER,
+    }

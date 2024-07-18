@@ -24,7 +24,9 @@ class CraftAction(ItemListAction):
     def xml_template(self) -> str:
         return str("<SimpleCraftCommands/>")
 
-    def __init__(self, items: list, _other=Optional[str], _default=Optional[str]):
+    def __init__(
+        self, items: list, _other=Optional[str], _default=Optional[str]
+    ):
         """
         Initializes the space of the handler to be one for each item in the list plus one for the
         default no-craft action (command 0)
@@ -46,7 +48,9 @@ class CraftAction(ItemListAction):
         ):
             try:
                 x = self._univ_items.index(obs["diff"]["crafted"][0]["item"])
-                return obs["diff"]["crafted"][0]["item"].split("minecraft:")[-1]
+                return obs["diff"]["crafted"][0]["item"].split("minecraft:")[
+                    -1
+                ]
             except ValueError:
                 return self._default
                 # return self._items.index('other')

@@ -97,25 +97,32 @@ class Box(gym.spaces.Box, MineRLSpace):
         if normalizer_scale == "log":
             self.max_log = np.log(1 + (self._flat_high - self._flat_low))
         else:
-            assert normalizer_scale == "linear", "only log and linear are supported"
+            assert (
+                normalizer_scale == "linear"
+            ), "only log and linear are supported"
 
         self.normalizer_scale = normalizer_scale
 
     CENTER = 0
 
     def no_op(self, batch_shape=()):
-        return np.zeros(shape=list(batch_shape) + list(self.shape)).astype(self.dtype)
+        return np.zeros(shape=list(batch_shape) + list(self.shape)).astype(
+            self.dtype
+        )
 
     def create_flattened_space(self):
         if len(self.shape) > 2:
-            raise TypeError("Box spaces with 3D tensor shapes cannot be flattened.")
+            raise TypeError(
+                "Box spaces with 3D tensor shapes cannot be flattened."
+            )
         else:
             return Box(low=self._flat_low, high=self._flat_high)
 
     def flat_map(self, x):
         if len(self.shape) > 0:
             flatx = x.reshape(
-                list(x.shape[: -len(self.shape)]) + [np.prod(self.shape).astype(int)]
+                list(x.shape[: -len(self.shape)])
+                + [np.prod(self.shape).astype(int)]
             )
         else:
             # assumes everything is in batch format, a scalar is already flattened and needs to be normalzied
@@ -128,7 +135,8 @@ class Box(gym.spaces.Box, MineRLSpace):
             ) - Box.CENTER
         elif self.normalizer_scale == "log":
             return (
-                np.log(flatx.astype(np.float64) - self._flat_low + 1) / self.max_log
+                np.log(flatx.astype(np.float64) - self._flat_low + 1)
+                / self.max_log
                 - Box.CENTER
             )
 
@@ -178,7 +186,11 @@ class Box(gym.spaces.Box, MineRLSpace):
 
         bdim = () if bs is None else (bs,)
 
-        high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
+        high = (
+            self.high
+            if self.dtype.kind == "f"
+            else self.high.astype("int64") + 1
+        )
         sample = np.empty(bdim + self.shape)
 
         # Masking arrays which classify the coordinates according to interval
@@ -194,12 +206,16 @@ class Box(gym.spaces.Box, MineRLSpace):
         )
 
         sample[..., low_bounded] = (
-            self.np_random.exponential(size=bdim + low_bounded[low_bounded].shape)
+            self.np_random.exponential(
+                size=bdim + low_bounded[low_bounded].shape
+            )
             + self.low[low_bounded]
         )
 
         sample[..., upp_bounded] = (
-            -self.np_random.exponential(size=bdim + upp_bounded[upp_bounded].shape)
+            -self.np_random.exponential(
+                size=bdim + upp_bounded[upp_bounded].shape
+            )
             - self.high[upp_bounded]
         )
 
@@ -308,13 +324,17 @@ class Enum(Discrete, MineRLSpace):
 
             u, inv = np.unique(action, return_inverse=True)
 
-            inds = np.array([self.value_map[x] for x in u])[inv].reshape(action.shape)
+            inds = np.array([self.value_map[x] for x in u])[inv].reshape(
+                action.shape
+            )
 
             return inds if not single_act else inds.tolist()[0]
 
         except ValueError:
             raise ValueError(
-                '"{}" not valid ENUM value in values {}'.format(action, self.values)
+                '"{}" not valid ENUM value in values {}'.format(
+                    action, self.values
+                )
             )
 
         # TODO support more action formats through np.all < super().n
@@ -344,7 +364,11 @@ class Dict(gym.spaces.Dict, MineRLSpace):
 
     def create_flattened_space(self):
         shape = sum(
-            [s.flattened.shape[0] for s in self.spaces.values() if s.is_flattenable()]
+            [
+                s.flattened.shape[0]
+                for s in self.spaces.values()
+                if s.is_flattenable()
+            ]
         )
         return Box(low=0, high=1, shape=[shape], dtype=np.float32)
 
@@ -455,7 +479,8 @@ class Dict(gym.spaces.Dict, MineRLSpace):
             if v.is_flattenable():
                 try:
                     unmapped[k] = v.unmap_mixed(
-                        x[..., cur_index : cur_index + v.flattened.shape[0]], aux[k]
+                        x[..., cur_index : cur_index + v.flattened.shape[0]],
+                        aux[k],
                     )
                 except (KeyError, AttributeError):
                     unmapped[k] = v.unmap(
@@ -474,9 +499,9 @@ class MultiDiscrete(gym.spaces.MultiDiscrete, MineRLSpace):
         self.eyes = [np.eye(n, dtype=np.float32) for n in self.nvec]
 
     def no_op(self, batch_shape=()):
-        return (np.zeros(list(batch_shape) + list(self.nvec.shape)) * self.nvec).astype(
-            self.dtype
-        )
+        return (
+            np.zeros(list(batch_shape) + list(self.nvec.shape)) * self.nvec
+        ).astype(self.dtype)
 
     def create_flattened_space(self):
         return Box(low=0, high=1, shape=[np.sum(self.nvec)])
@@ -491,7 +516,9 @@ class MultiDiscrete(gym.spaces.MultiDiscrete, MineRLSpace):
         out = []
         for n in self.nvec:
             out.append(
-                np.argmax(x[..., cur_index : cur_index + n], axis=-1)[..., np.newaxis]
+                np.argmax(x[..., cur_index : cur_index + n], axis=-1)[
+                    ..., np.newaxis
+                ]
             )
             cur_index += n
         return np.concatenate(out, axis=-1).astype(self.dtype)

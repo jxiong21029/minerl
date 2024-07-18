@@ -148,9 +148,9 @@ def prep_mcp():
         os.chdir(os.path.join(mydir, "scripts"))
 
         try:
-            setup_output = subprocess.check_output(["bash.exe", "setup_mcp.sh"]).decode(
-                errors="ignore"
-            )
+            setup_output = subprocess.check_output(
+                ["bash.exe", "setup_mcp.sh"]
+            ).decode(errors="ignore")
             if "ERROR: JAVA_HOME" in setup_output:
                 raise RuntimeError(
                     """
@@ -189,8 +189,12 @@ def prep_mcp():
 
         os.chdir(old_dir)
     else:
-        subprocess.check_call(["bash", os.path.join(mydir, "scripts", "setup_mcp.sh")])
-        subprocess.check_call(["bash", os.path.join(mydir, "scripts", "patch_mcp.sh")])
+        subprocess.check_call(
+            ["bash", os.path.join(mydir, "scripts", "setup_mcp.sh")]
+        )
+        subprocess.check_call(
+            ["bash", os.path.join(mydir, "scripts", "patch_mcp.sh")]
+        )
 
     # Next, move onto building the MCP source
     gradlew = "gradlew.bat" if os.name == "nt" else "./gradlew"
@@ -223,7 +227,9 @@ def prep_mcp():
 
 # Don't build binaries (requires Java) on readthedocs.io server.
 if os.environ.get("READTHEDOCS"):
-    print("READTHEDOCS env var is set; performing partial package install only.")
+    print(
+        "READTHEDOCS env var is set; performing partial package install only."
+    )
     cmdclass = {}
 else:
     cmdclass = {

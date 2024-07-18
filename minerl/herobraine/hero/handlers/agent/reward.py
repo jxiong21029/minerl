@@ -82,7 +82,8 @@ class _RewardForPosessingItemBase(RewardHandler):
         self.exclude_loops = exclude_loops
         self.items = item_rewards
         self.reward_dict = {
-            a["type"]: dict(reward=a["reward"], amount=a["amount"]) for a in self.items
+            a["type"]: dict(reward=a["reward"], amount=a["amount"])
+            for a in self.items
         }
         # Assert that no amount is greater than 1.
         for k, v in self.reward_dict.items():
@@ -108,7 +109,9 @@ class RewardForCollectingItems(_RewardForPosessingItemBase):
                 dict(type="log", amount=1, reward=1.0),
             ])
         """
-        super().__init__(sparse=False, exclude_loops=True, item_rewards=item_rewards)
+        super().__init__(
+            sparse=False, exclude_loops=True, item_rewards=item_rewards
+        )
 
     def from_universal(self, x):
         # TODO: Now get all of these to work correctly.
@@ -118,7 +121,10 @@ class RewardForCollectingItems(_RewardForPosessingItemBase):
                 item_name = strip_item_prefix(change_json["item"])
                 if item_name == "log2":
                     item_name = "log"
-                if item_name in self.reward_dict and "quantity_change" in change_json:
+                if (
+                    item_name in self.reward_dict
+                    and "quantity_change" in change_json
+                ):
                     if change_json["quantity_change"] > 0:
                         total_reward += (
                             change_json["quantity_change"]
@@ -137,7 +143,9 @@ class RewardForCollectingItemsOnce(_RewardForPosessingItemBase):
     """
 
     def __init__(self, item_rewards: List[Dict[str, Union[str, int]]]):
-        super().__init__(sparse=True, exclude_loops=True, item_rewards=item_rewards)
+        super().__init__(
+            sparse=True, exclude_loops=True, item_rewards=item_rewards
+        )
         self.seen_dict = dict()
 
     def from_universal(self, x):
@@ -223,7 +231,8 @@ class RewardForTouchingBlockType(RewardHandler):
             for block in obs["touched_blocks"]:
                 for bl in self.blocks:
                     if bl["type"] in block["name"] and (
-                        not self.fired[bl["type"]] or bl["behaviour"] != "onlyOnce"
+                        not self.fired[bl["type"]]
+                        or bl["behaviour"] != "onlyOnce"
                     ):
                         reward += bl["reward"]
                         self.fired[bl["type"]] = True
@@ -256,7 +265,9 @@ class RewardForDistanceTraveledToCompassTarget(RewardHandler):
                 target = obs["compass"]["target"]
                 target_pos = np.array([target["x"], target["y"], target["z"]])
                 position = obs["compass"]["position"]
-                cur_pos = np.array([position["x"], position["y"], position["z"]])
+                cur_pos = np.array(
+                    [position["x"], position["y"], position["z"]]
+                )
                 delta = np.linalg.norm(target_pos - cur_pos)
                 if not self._prev_delta:
                     return 0

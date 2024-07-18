@@ -85,7 +85,9 @@ class RandomInventoryAgentStart(InventoryAgentStart):
     that fills
     """
 
-    def __init__(self, inventory: Dict[str, Union[str, int]], use_hotbar: bool = False):
+    def __init__(
+        self, inventory: Dict[str, Union[str, int]], use_hotbar: bool = False
+    ):
         """Creates an inventory where items are placed in random positions
 
         For example:
@@ -111,7 +113,9 @@ class AgentStartBreakSpeedMultiplier(Handler):
         return f"agent_start_break_speed_multiplier({self.multiplier})"
 
     def xml_template(self) -> str:
-        return str("""<BreakSpeedMultiplier>{{multiplier}}</BreakSpeedMultiplier>""")
+        return str(
+            """<BreakSpeedMultiplier>{{multiplier}}</BreakSpeedMultiplier>"""
+        )
 
     def __init__(self, multiplier=1.0):
         self.multiplier = multiplier

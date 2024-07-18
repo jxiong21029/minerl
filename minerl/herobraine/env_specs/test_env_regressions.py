@@ -88,14 +88,10 @@ The agent is given a sparse reward (+100 upon reaching the goal, at which point 
         navigate_text += "**This variant of the environment is sparse.**\n"
 
     if top is "normal":
-        navigate_text += (
-            "\nIn this environment, the agent spawns on a random survival map.\n"
-        )
+        navigate_text += "\nIn this environment, the agent spawns on a random survival map.\n"
         navigate_text = navigate_text.format(*["" for _ in range(4)])
     else:
-        navigate_text += (
-            "\nIn this environment, the agent spawns in an extreme hills biome.\n"
-        )
+        navigate_text += "\nIn this environment, the agent spawns in an extreme hills biome.\n"
         navigate_text = navigate_text.format(*["extreme" for _ in range(4)])
     return navigate_text
 
@@ -123,7 +119,9 @@ navigate_observation_space = spaces.Dict(
         ),
         "compass": spaces.Dict(
             spaces={
-                "angle": spaces.Box(low=-180.0, high=180.0, shape=(), dtype=np.float32)
+                "angle": spaces.Box(
+                    low=-180.0, high=180.0, shape=(), dtype=np.float32
+                )
             }
         ),
     }
@@ -200,18 +198,32 @@ obtain_observation_space = spaces.Dict(
                 "log": spaces.Box(low=0, high=2304, shape=(), dtype=int),
                 "planks": spaces.Box(low=0, high=2304, shape=(), dtype=int),
                 "stick": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "crafting_table": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "wooden_axe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "wooden_pickaxe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
+                "crafting_table": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
+                "wooden_axe": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
+                "wooden_pickaxe": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
                 "stone": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "cobblestone": spaces.Box(low=0, high=2304, shape=(), dtype=int),
+                "cobblestone": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
                 "furnace": spaces.Box(low=0, high=2304, shape=(), dtype=int),
                 "stone_axe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "stone_pickaxe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
+                "stone_pickaxe": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
                 "iron_ore": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "iron_ingot": spaces.Box(low=0, high=2304, shape=(), dtype=int),
+                "iron_ingot": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
                 "iron_axe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
-                "iron_pickaxe": spaces.Box(low=0, high=2304, shape=(), dtype=int),
+                "iron_pickaxe": spaces.Box(
+                    low=0, high=2304, shape=(), dtype=int
+                ),
             }
         ),
         "equipped_items": spaces.Dict(
@@ -229,8 +241,12 @@ obtain_observation_space = spaces.Dict(
                             "iron_pickaxe",
                             "other",
                         ),
-                        damage=spaces.Box(low=-1, high=1562, shape=(), dtype=int),
-                        maxDamage=spaces.Box(low=-1, high=1562, shape=(), dtype=int),
+                        damage=spaces.Box(
+                            low=-1, high=1562, shape=(), dtype=int
+                        ),
+                        maxDamage=spaces.Box(
+                            low=-1, high=1562, shape=(), dtype=int
+                        ),
                     )
                 )
             )
@@ -252,7 +268,13 @@ obtain_action_space = spaces.Dict(
             low=-180, high=180, shape=(2,), dtype=np.float32
         ),  # Pitch, Yaw
         "place": spaces.Enum(
-            "none", "dirt", "stone", "cobblestone", "crafting_table", "furnace", "torch"
+            "none",
+            "dirt",
+            "stone",
+            "cobblestone",
+            "crafting_table",
+            "furnace",
+            "torch",
         ),
         "equip": spaces.Enum(
             "none",
@@ -264,7 +286,9 @@ obtain_action_space = spaces.Dict(
             "iron_axe",
             "iron_pickaxe",
         ),
-        "craft": spaces.Enum("none", "torch", "stick", "planks", "crafting_table"),
+        "craft": spaces.Enum(
+            "none", "torch", "stick", "planks", "crafting_table"
+        ),
         "nearbyCraft": spaces.Enum(
             "none",
             "wooden_axe",
@@ -493,7 +517,9 @@ def test_env_space_regressions():
         old_xml_dict = xmltodict.parse(old_env_xml)
         new_xml_dict = xmltodict.parse(new_env_xml)
         assert_equal_recursive(
-            new_xml_dict, old_xml_dict, ignore=["@generatorOptions", "Name", "About"]
+            new_xml_dict,
+            old_xml_dict,
+            ignore=["@generatorOptions", "Name", "About"],
         )
 
 

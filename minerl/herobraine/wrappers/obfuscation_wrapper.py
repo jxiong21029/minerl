@@ -28,9 +28,13 @@ class Obfuscated(EnvWrapper):
             obfuscator_dir (str, os.path.Path): The path to the obfuscator neural networks.
             name (str, optional): A method to overide the name. Defaults to ''.
         """
-        self.obf_vector_len, self.ac_enc, self.ac_dec, self.obs_enc, self.obs_dec = (
-            Obfuscated._get_obfuscator(obfuscator_dir)
-        )
+        (
+            self.obf_vector_len,
+            self.ac_enc,
+            self.ac_dec,
+            self.obs_enc,
+            self.obs_dec,
+        ) = Obfuscated._get_obfuscator(obfuscator_dir)
 
         super().__init__(env_to_wrap)
 
@@ -80,7 +84,9 @@ class Obfuscated(EnvWrapper):
 
         # TODO: This code should be centralized with the make_obfuscator network.
 
-        assert os.path.exists(obfuscator_dir), "{} not found.".format(obfuscator_dir)
+        assert os.path.exists(obfuscator_dir), "{} not found.".format(
+            obfuscator_dir
+        )
         assert set(os.listdir(obfuscator_dir)).issuperset(
             {
                 OBSERVATION_OBFUSCATOR_FILE_NAME,
@@ -96,7 +102,8 @@ class Obfuscated(EnvWrapper):
         # Get the directory for the actions
         # ac_enc, ac_dec = np.load(f)
         ac_enc, ac_dec = np.load(
-            os.path.join(obfuscator_dir, ACTION_OBFUSCATOR_FILE_NAME), allow_pickle=True
+            os.path.join(obfuscator_dir, ACTION_OBFUSCATOR_FILE_NAME),
+            allow_pickle=True,
         )["arr_0"]
         ac_enc, ac_dec = make_func(ac_enc), make_func(ac_dec)
 
@@ -140,11 +147,15 @@ class Obfuscated(EnvWrapper):
         return act
 
     def _unwrap_observation(self, obs: OrderedDict) -> OrderedDict:
-        obs["vector"] = np.clip(self.obs_dec(obs["vector"]), 0, 1)  # decode then CLIP
+        obs["vector"] = np.clip(
+            self.obs_dec(obs["vector"]), 0, 1
+        )  # decode then CLIP
         return obs
 
     def _unwrap_action(self, act: OrderedDict) -> OrderedDict:
-        act["vector"] = np.clip(self.ac_dec(act["vector"]), 0, 1)  # decode then CLIP
+        act["vector"] = np.clip(
+            self.ac_dec(act["vector"]), 0, 1
+        )  # decode then CLIP
         return act
 
     def get_docstring(self):

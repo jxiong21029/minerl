@@ -52,7 +52,9 @@ class AgentQuitFromCraftingItem(Handler):
 
         for item in self.items:
             assert "type" in item, "{} does contain `type`".format(item)
-            assert "amount" in item, "{} does not contain `amount`".format(item)
+            assert "amount" in item, "{} does not contain `amount`".format(
+                item
+            )
 
 
 #  <AgentQuitFromPossessingItem>
@@ -83,4 +85,6 @@ class AgentQuitFromPossessingItem(Handler):
         # Assert that all the items have the correct fields for the XML.
         for item in self.items:
             assert "type" in item, "{} does contain `type`".format(item)
-            assert "amount" in item, "{} does not contain `amount`".format(item)
+            assert "amount" in item, "{} does not contain `amount`".format(
+                item
+            )

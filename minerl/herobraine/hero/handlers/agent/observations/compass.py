@@ -44,7 +44,9 @@ class CompassObservation(TranslationHandlerGroup):
                     hero_keys=["distanceToCompassTarget"],
                     univ_keys=["compass", "distance"],
                     to_string="distance",
-                    space=spaces.Box(low=0, high=np.inf, shape=(), dtype=np.float32),
+                    space=spaces.Box(
+                        low=0, high=np.inf, shape=(), dtype=np.float32
+                    ),
                 )
             )
 
@@ -60,10 +62,14 @@ class _CompassAngleObservation(KeymapTranslationHandler):
         super().__init__(
             hero_keys=["compassAngle"],
             univ_keys=["compass", "angle"],
-            space=spaces.Box(low=-180.0, high=180.0, shape=(), dtype=np.float32),
+            space=spaces.Box(
+                low=-180.0, high=180.0, shape=(), dtype=np.float32
+            ),
             to_string="angle",
         )
 
     def from_universal(self, obs):
-        y = np.array(((super().from_universal(obs) * 360.0 + 180) % 360.0) - 180)
+        y = np.array(
+            ((super().from_universal(obs) * 360.0 + 180) % 360.0) - 180
+        )
         return y

@@ -91,7 +91,9 @@ class InstanceManager:
     """
 
     MINECRAFT_DIR = os.path.join(os.path.dirname(__file__), "..", "MCP-Reborn")
-    SCHEMAS_DIR = os.path.join(os.path.dirname(__file__), "..", "Malmo", "Schemas")
+    SCHEMAS_DIR = os.path.join(
+        os.path.dirname(__file__), "..", "Malmo", "Schemas"
+    )
     STATUS_DIR = os.path.join(
         os.path.abspath(os.path.dirname(sys.argv[0])), "performance"
     )
@@ -123,7 +125,9 @@ class InstanceManager:
         seed_type = int(seed_type)
 
         if seed_type == (SeedType.NONE):
-            assert seeds is None, "Seed type set to NONE, therefore seed cannot be set."
+            assert (
+                seeds is None
+            ), "Seed type set to NONE, therefore seed cannot be set."
         elif seed_type == (SeedType.CONSTANT):
             assert (
                 seeds is not None
@@ -136,7 +140,9 @@ class InstanceManager:
             cls._seed_generator = Random(int(seeds))
         elif seed_type == (SeedType.SPECIFIED):
             cls._seed_generator = [
-                [str(x) for x in s.split(",") if x] for s in seeds.split("-") if s
+                [str(x) for x in s.split(",") if x]
+                for s in seeds.split("-")
+                if s
             ]
         else:
             raise TypeError("Seed type {} not supported".format(seed_type))
@@ -168,10 +174,14 @@ class InstanceManager:
                     )
                 return cls._seed_generator[i]
             except IndexError:
-                raise TypeError("Seed type {} ran out of seeds.".format(cls._seed_type))
+                raise TypeError(
+                    "Seed type {} ran out of seeds.".format(cls._seed_type)
+                )
         else:
             raise TypeError(
-                "Seed type {} does not support getting next seed".format(cls._seed_type)
+                "Seed type {} does not support getting next seed".format(
+                    cls._seed_type
+                )
             )
 
     @classmethod
@@ -201,7 +211,9 @@ class InstanceManager:
         # Otherwise make a new instance if possible
         if cls.managed:
             if cls.MAXINSTANCES is None or cls.ninstances < cls.MAXINSTANCES:
-                instance_id = cls.ninstances if instance_id is None else instance_id
+                instance_id = (
+                    cls.ninstances if instance_id is None else instance_id
+                )
 
                 cls.ninstances += 1
                 # Make the status directory.
@@ -233,7 +245,9 @@ class InstanceManager:
                     "No available instances and max instances reached! :O :O"
                 )
         else:
-            raise RuntimeError("No available instances and managed flag is off")
+            raise RuntimeError(
+                "No available instances and managed flag is off"
+            )
 
     @classmethod
     def shutdown(cls):
@@ -255,7 +269,9 @@ class InstanceManager:
 
     @classmethod
     def add_existing_instance(cls, port):
-        assert cls._is_port_taken(port), "No Malmo mod utilizing the port specified."
+        assert cls._is_port_taken(
+            port
+        ), "No Malmo mod utilizing the port specified."
         instance = MinecraftInstance(port=port, existing=True, status_dir=None)
         cls._instance_pool.append(instance)
         cls.ninstances += 1
@@ -264,7 +280,9 @@ class InstanceManager:
     @classmethod
     def add_keep_alive(cls, _pid, _callback):
         logger.debug(
-            "Recieved keep-alive callback from client {}. Starting thread.".format(_pid)
+            "Recieved keep-alive callback from client {}. Starting thread.".format(
+                _pid
+            )
         )
 
         def check_client_connected(client_pid, keep_alive_proxy):
@@ -279,7 +297,9 @@ class InstanceManager:
                     keep_alive_proxy.call()
                 except Exception:
                     bad_insts = [
-                        inst for inst in cls._instance_pool if inst.owner == client_pid
+                        inst
+                        for inst in cls._instance_pool
+                        if inst.owner == client_pid
                     ]
                     for inst in bad_insts:
                         inst.close()
@@ -423,7 +443,9 @@ class MinecraftInstance(object):
             #                 ignore=shutil.ignore_patterns('cache.properties.lock'))
             # shutil.copytree(os.path.join(InstanceManager.SCHEMAS_DIR), os.path.join(self.instance_dir, 'Malmo', 'Schemas'))
             self.minecraft_dir = InstanceManager.MINECRAFT_DIR
-            self.instance_dir = os.path.join(InstanceManager.MINECRAFT_DIR, "..")
+            self.instance_dir = os.path.join(
+                InstanceManager.MINECRAFT_DIR, ".."
+            )
 
             # 0. Get PID of launcher.
             parent_pid = os.getpid()
@@ -510,7 +532,9 @@ class MinecraftInstance(object):
                     "mc_{}.log".format(self._target_port - 9000),
                 )
 
-                logger.info("Logging output of Minecraft to {}".format(file_path))
+                logger.info(
+                    "Logging output of Minecraft to {}".format(file_path)
+                )
 
                 mine_log = open(file_path, "wb+")
                 mine_log.truncate(0)
@@ -525,7 +549,9 @@ class MinecraftInstance(object):
                         try:
                             linestr = line.decode(mine_log_encoding)
                         except UnicodeDecodeError:
-                            mine_log_encoding = locale.getpreferredencoding(False)
+                            mine_log_encoding = locale.getpreferredencoding(
+                                False
+                            )
                             logger.error(
                                 "UnicodeDecodeError, switching to default encoding"
                             )
@@ -611,7 +637,9 @@ class MinecraftInstance(object):
     ###########################
     ##### PRIVATE METHODS #####
     ###########################
-    def _launch_minecraft(self, port, headless, minecraft_dir, replaceable=False):
+    def _launch_minecraft(
+        self, port, headless, minecraft_dir, replaceable=False
+    ):
         """Launch Minecraft listening for malmoenv connections.
         Args:
             port:  the TCP port to listen on.
@@ -639,7 +667,6 @@ class MinecraftInstance(object):
 
         cmd_to_print = cmd[:] if not self._seed else cmd[:-2]
         self._logger.info("Starting Minecraft process: " + str(cmd_to_print))
-        # print(cmd)
 
         if replaceable:
             cmd.append("-replaceable")
@@ -648,7 +675,6 @@ class MinecraftInstance(object):
             if "linux" in str(sys.platform) or sys.platform == "darwin"
             else None
         )
-        # print(preexec_fn)
         minecraft_process = psutil.Popen(
             cmd,
             cwd=InstanceManager.MINECRAFT_DIR,
@@ -667,7 +693,9 @@ class MinecraftInstance(object):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(1)
             sock.connect((host, port))
-            comms.send_message(sock, ("<MalmoEnv" + malmo_version + "/>").encode())
+            comms.send_message(
+                sock, ("<MalmoEnv" + malmo_version + "/>").encode()
+            )
 
             comms.send_message(sock, ("<Exit>NOW</Exit>").encode())
             reply = comms.recv_message(sock)
@@ -834,7 +862,9 @@ def launch_instance_manager():
         type=str,
         default=SeedType.CONSTANT,
         help="The seeding type for the environment. Defaults to 1 (CONSTANT)"
-        "if a seed specified, otherwise 0 (NONE): \n{}".format(SeedType.__doc__),
+        "if a seed specified, otherwise 0 (NONE): \n{}".format(
+            SeedType.__doc__
+        ),
     )
 
     parser.add_argument(
@@ -847,7 +877,9 @@ def launch_instance_manager():
     opts = parser.parse_args()
 
     if opts.max_instances is not None:
-        assert opts.max_instances > 0, "Maximum instances must be more than zero!"
+        assert (
+            opts.max_instances > 0
+        ), "Maximum instances must be more than zero!"
         InstanceManager.MAXINSTANCES = opts.max_instances
 
     try:
@@ -865,15 +897,21 @@ def launch_instance_manager():
 
         # Initialize seeding.
         if opts.seeds is not None:
-            InstanceManager._init_seeding(seeds=opts.seeds, seed_type=opts.seeding_type)
+            InstanceManager._init_seeding(
+                seeds=opts.seeds, seed_type=opts.seeding_type
+            )
         else:
             InstanceManager._init_seeding(seed_type=SeedType.NONE)
 
-        Pyro4.Daemon.serveSimple({InstanceManager: INSTANCE_MANAGER_PYRO}, ns=True)
+        Pyro4.Daemon.serveSimple(
+            {InstanceManager: INSTANCE_MANAGER_PYRO}, ns=True
+        )
 
     except Pyro4.errors.NamingError as e:
         print(e)
-        print("Start the Pyro name server with pyro4-ns and re-run this script.")
+        print(
+            "Start the Pyro name server with pyro4-ns and re-run this script."
+        )
 
 
 class CustomAsyncRemoteMethod(Pyro4.core._AsyncRemoteMethod):

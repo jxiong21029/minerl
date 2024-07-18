@@ -6,7 +6,13 @@
 
 
 # Test that unmap composed with flat_map returns the original value
-from minerl.herobraine.hero.spaces import Box, Dict, Discrete, MultiDiscrete, Enum
+from minerl.herobraine.hero.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    MultiDiscrete,
+    Enum,
+)
 import collections
 import numpy as np
 
@@ -111,7 +117,9 @@ def test_all():
             "three": Discrete(5),
             "four": Enum("type1", "type2"),
             "five": Enum("type1"),
-            "six": Dict({"a": Box(shape=[3, 2], low=-1, high=2, dtype=np.float32)}),
+            "six": Dict(
+                {"a": Box(shape=[3, 2], low=-1, high=2, dtype=np.float32)}
+            ),
         }
     )
 

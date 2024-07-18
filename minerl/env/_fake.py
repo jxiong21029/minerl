@@ -29,14 +29,18 @@ class _FakeEnvMixin(object):
         # TODO: Fake envs should use env.sample and pre_recorded envs should feature real sampled data!
         # TODO: Move fake environments.
         self._fake_malmo_data = np.load(
-            os.path.join(os.path.abspath(os.path.dirname(__file__)), "info.npz"),
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)), "info.npz"
+            ),
             allow_pickle=True,
         )["arr_0"].tolist()
 
     def _setup_instances(self) -> None:
         self.instances = [NotImplemented for _ in range(self.task.agent_count)]
 
-    def _send_mission(self, _, mission_xml_etree: etree.Element, token_in: str) -> None:
+    def _send_mission(
+        self, _, mission_xml_etree: etree.Element, token_in: str
+    ) -> None:
         logger.debug(
             "Sending fake XML for {}:".format(token_in)
             + etree.tostring(mission_xml_etree).decode()
@@ -76,7 +80,9 @@ class _FakeEnvMixin(object):
             pov = pov[::-1, :, :]
             _json_info = json.dumps(malmo_data)
 
-            obs[agent], info[agent] = self._process_observation(agent, pov, _json_info)
+            obs[agent], info[agent] = self._process_observation(
+                agent, pov, _json_info
+            )
         # TODO: UPDATE INFO FOR MONITORS!
         return obs, info
 

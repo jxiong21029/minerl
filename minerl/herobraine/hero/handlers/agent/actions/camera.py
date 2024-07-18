@@ -21,7 +21,8 @@ class CameraAction(Action):
         # TODO: Document and clean this wierd _ magic.
         self._command = "camera"
         super().__init__(
-            self.command, spaces.Box(low=-180, high=180, shape=[2], dtype=np.float32)
+            self.command,
+            spaces.Box(low=-180, high=180, shape=[2], dtype=np.float32),
         )
 
     def from_universal(self, x):

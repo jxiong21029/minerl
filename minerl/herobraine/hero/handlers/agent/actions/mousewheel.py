@@ -18,5 +18,6 @@ class MouseWheelAction(Action):
         self._command = "dwheel"
         # TODO the limits are arbitrary
         super().__init__(
-            self.command, spaces.Box(low=-10, high=10, shape=[1], dtype=np.float32)
+            self.command,
+            spaces.Box(low=-10, high=10, shape=[1], dtype=np.float32),
         )

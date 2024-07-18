@@ -73,7 +73,9 @@ class ItemListAction(Action):
     def xml_template(self) -> str:
         pass
 
-    def __init__(self, command: str, items: list, _default="none", _other="other"):
+    def __init__(
+        self, command: str, items: list, _default="none", _other="other"
+    ):
         """
         Initializes the space of the handler with a gym.spaces.Dict
         of all of the spaces for each individual command.
@@ -117,13 +119,17 @@ class ItemListAction(Action):
         """
 
         if not isinstance(other, self.__class__):
-            raise TypeError("other must be an instance of ItemListCommandAction")
+            raise TypeError(
+                "other must be an instance of ItemListCommandAction"
+            )
 
         if self._command != other._command:
             raise ValueError("Command must be the same for merging")
 
         new_items = list(set(self._items) | set(other._items))
-        return self.__class__(new_items, _default=self._default, _other=self._other)
+        return self.__class__(
+            new_items, _default=self._default, _other=self._other
+        )
 
     def __eq__(self, other):
         """

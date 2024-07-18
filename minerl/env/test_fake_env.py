@@ -34,7 +34,9 @@ def _test_fake_env(env_spec, should_render=False):
     assert fake_obs in env_spec.observation_space
 
     for _ in range(100):
-        fake_obs, _, _, fake_monitor = fake_env.step(fake_env.action_space.sample())
+        fake_obs, _, _, fake_monitor = fake_env.step(
+            fake_env.action_space.sample()
+        )
         if should_render:
             fake_env.render()
             time.sleep(0.1)
@@ -53,7 +55,9 @@ def test_fake_navigate_with_distance_monitor():
     _ = fake_env.reset()
 
     for _ in range(100):
-        fake_obs, _, _, fake_monitor = fake_env.step(fake_env.action_space.sample())
+        fake_obs, _, _, fake_monitor = fake_env.step(
+            fake_env.action_space.sample()
+        )
         assert fake_monitor in fake_env.monitor_space
         assert "compass" in fake_monitor
         assert "distance" in fake_monitor["compass"]

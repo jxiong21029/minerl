@@ -54,7 +54,9 @@ class Handler(ABC):
             if "xml" not in attr_name:
                 var_dict[attr_name] = getattr(self, attr_name)
         try:
-            env = jinja2.Environment(undefined=jinja2.StrictUndefined, autoescape=True)
+            env = jinja2.Environment(
+                undefined=jinja2.StrictUndefined, autoescape=True
+            )
             template = env.from_string(self.xml_template())
             return template.render(var_dict)
         except jinja2.UndefinedError as e:

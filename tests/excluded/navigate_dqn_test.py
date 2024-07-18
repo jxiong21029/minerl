@@ -117,8 +117,8 @@ if __name__ == "__main__":
             else:
                 # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
                 if t > 1000:
-                    obses_t, actions, rewards, obses_tp1, dones = replay_buffer.sample(
-                        32
+                    obses_t, actions, rewards, obses_tp1, dones = (
+                        replay_buffer.sample(32)
                     )
                     train(
                         obses_t,
@@ -136,7 +136,8 @@ if __name__ == "__main__":
                 logger.record_tabular("steps", t)
                 logger.record_tabular("episodes", len(episode_rewards))
                 logger.record_tabular(
-                    "mean episode reward", round(np.mean(episode_rewards[-101:-1]), 1)
+                    "mean episode reward",
+                    round(np.mean(episode_rewards[-101:-1]), 1),
                 )
                 logger.record_tabular(
                     "% time spent exploring", int(100 * exploration.value(t))
