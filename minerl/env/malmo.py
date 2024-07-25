@@ -381,7 +381,7 @@ class MinecraftInstance(object):
             if not port:
                 port = InstanceManager._get_valid_port()
 
-            if os.environ.get("MINERL_TMP_INSTANCES", 0):
+            if os.environ.get("MINERL_TMP_INSTANCES", "false").lower() in ("true", "1"):
                 # Copies built .jar and makes logs + save files write to a temporary
                 # directory to avoid issues e.g. when running on slurm.
                 self.instance_tempdir = tempfile.TemporaryDirectory()
