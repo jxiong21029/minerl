@@ -409,6 +409,7 @@ class MinecraftInstance(object):
         self.existing = existing
         self.minecraft_dir = None
         self.instance_dir = None
+        self.instance_tempdir = None
         self._status_dir = status_dir
         self.owner = None
         self._max_mem = max_mem
@@ -439,43 +440,40 @@ class MinecraftInstance(object):
             if not port:
                 port = InstanceManager._get_valid_port()
 
-            # This variant copies MCP-Reborn and Malmo Schema to a temporary
-            # directory (probably in /tmp) and runs environment from there
-            # os.makedirs(
-            #     os.path.join(InstanceManager.MINECRAFT_DIR, "..", "instances"),
-            #     exist_ok=True,
-            # )
-            self.instance_tempdir = tempfile.TemporaryDirectory(
-                dir=None,
-                # dir=os.path.join(
-                #     InstanceManager.MINECRAFT_DIR, "..", "instances"
-                # )
-            )
-            self.instance_dir = self.instance_tempdir.name
+            if os.environ.get("MINERL_TMP_INSTANCES", "false").lower() in ("true", "1"):
+                # Copies built .jar and makes logs + save files write to a temporary
+                # directory to avoid issues e.g. when running on slurm.
+                self.instance_tempdir = tempfile.TemporaryDirectory()
+                self.instance_dir = self.instance_tempdir.name
 
-            self.minecraft_dir = os.path.join(self.instance_dir, "MCP-Reborn")
-            shutil.copytree(
-                os.path.join(InstanceManager.MINECRAFT_DIR),
-                self.minecraft_dir,
-                ignore=shutil.ignore_patterns("cache.properties.lock"),
-            )
-            shutil.copytree(
-                os.path.join(InstanceManager.SCHEMAS_DIR),
-                os.path.join(self.instance_dir, "Malmo", "Schemas"),
-            )
-
-            # Original variant simply runs in original MCP-Reborn directory,
-            # which can run into issues e.g. running multiple jobs with slurm
-            # over an NFS filesystem
-
-            # self.minecraft_dir = InstanceManager.MINECRAFT_DIR
-            # self.instance_dir = os.path.join(
-            #     InstanceManager.MINECRAFT_DIR, ".."
-            # )
+                self.minecraft_dir = os.path.join(self.instance_dir, "MCP-Reborn")
+                os.makedirs(os.path.join(self.minecraft_dir, "build"), exist_ok=True)
+                shutil.copytree(
+                    os.path.join(InstanceManager.MINECRAFT_DIR, "build", "libs"),
+                    os.path.join(self.minecraft_dir, "build", "libs"),
+                    ignore=shutil.ignore_patterns("cache.properties.lock")
+                )
+                shutil.copy2(
+                    os.path.join(InstanceManager.MINECRAFT_DIR, "launchClient.sh"),
+                    os.path.join(self.minecraft_dir, "launchClient.sh")
+                )
+                shutil.copy2(
+                    os.path.join(InstanceManager.MINECRAFT_DIR, "launchClient.bat"),
+                    os.path.join(self.minecraft_dir, "launchClient.bat")
+                )
+                shutil.copytree(
+                    os.path.join(InstanceManager.SCHEMAS_DIR),
+                    os.path.join(self.instance_dir, "Malmo", "Schemas"),
+                )
+            else:
+                # By default, runs with existing jar and puts logs + save files in
+                # minerl/MCP-Reborn.
+                self.minecraft_dir = InstanceManager.MINECRAFT_DIR
+                self.instance_dir = os.path.join(InstanceManager.MINECRAFT_DIR, '..')
 
             # 0. Get PID of launcher.
             parent_pid = os.getpid()
-            # 1. Launch minecraft process and
+            # 1. Launch minecraft process
             self.minecraft_process = self._launch_minecraft(
                 port,
                 InstanceManager.headless,
@@ -592,10 +590,8 @@ class MinecraftInstance(object):
                 finally:
                     mine_log.close()
 
-            logdir = os.environ.get("MALMO_MINECRAFT_OUTPUT_LOGDIR", ".")
-            self._logger_thread = threading.Thread(
-                target=functools.partial(log_to_file, logdir=logdir)
-            )
+            logdir = os.environ.get('MALMO_MINECRAFT_OUTPUT_LOGDIR', '.')
+            self._logger_thread = threading.Thread(target=functools.partial(log_to_file, logdir=logdir))
             self._logger_thread.daemon = True
             self._logger_thread.start()
 
@@ -768,10 +764,11 @@ class MinecraftInstance(object):
                 InstanceManager._instance_pool.remove(self)
                 self.release_lock()
 
-            # (Jerry) clean up instance temp directory
-            self.instance_tempdir.cleanup()
+            # clean up instance temp directory
+            if self.instance_tempdir is not None:
+                self.instance_tempdir.cleanup()
 
-            # (Jerry) clean up java tmpdir
+            # clean up java tmpdir
             java_tmpdir = f"/tmp/java_{self.port}"
             if Path(java_tmpdir).exists():
                 tempfile.TemporaryDirectory._rmtree(java_tmpdir)
@@ -807,9 +804,9 @@ class MinecraftInstance(object):
             or msg.startswith("Error")
         ) and ("connection closed, likely by peer" not in msg):
             self._logger.error(msg)
-        elif "WARN" in msg:
+        elif 'WARN' in msg:
             self._logger.warning(msg)
-        elif "LOGTOPY" in msg:
+        elif 'LOGTOPY' in msg:
             self._logger.info(msg)
         else:
             self._logger.debug(msg)
