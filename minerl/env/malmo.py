@@ -34,6 +34,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from enum import IntEnum
+from pathlib import Path
 from random import Random
 
 import psutil
@@ -296,7 +297,7 @@ class InstanceManager:
                 time.sleep(InstanceManager.KEEP_ALIVE_PYRO_FREQUENCY)
                 try:
                     keep_alive_proxy.call()
-                except Exception:
+                except:
                     bad_insts = [
                         inst
                         for inst in cls._instance_pool
@@ -440,7 +441,16 @@ class MinecraftInstance(object):
 
             # This variant copies MCP-Reborn and Malmo Schema to a temporary
             # directory (probably in /tmp) and runs environment from there
-            self.instance_tempdir = tempfile.TemporaryDirectory()
+            # os.makedirs(
+            #     os.path.join(InstanceManager.MINECRAFT_DIR, "..", "instances"),
+            #     exist_ok=True,
+            # )
+            self.instance_tempdir = tempfile.TemporaryDirectory(
+                dir=None,
+                # dir=os.path.join(
+                #     InstanceManager.MINECRAFT_DIR, "..", "instances"
+                # )
+            )
             self.instance_dir = self.instance_tempdir.name
 
             self.minecraft_dir = os.path.join(self.instance_dir, "MCP-Reborn")
@@ -455,7 +465,8 @@ class MinecraftInstance(object):
             )
 
             # Original variant simply runs in original MCP-Reborn directory,
-            # which can run into issues e.g. over NFS filesystems
+            # which can run into issues e.g. running multiple jobs with slurm
+            # over an NFS filesystem
 
             # self.minecraft_dir = InstanceManager.MINECRAFT_DIR
             # self.instance_dir = os.path.join(
@@ -757,8 +768,13 @@ class MinecraftInstance(object):
                 InstanceManager._instance_pool.remove(self)
                 self.release_lock()
 
-            # (jerry) cleanup instance temp directory
+            # (Jerry) clean up instance temp directory
             self.instance_tempdir.cleanup()
+
+            # (Jerry) clean up java tmpdir
+            java_tmpdir = f"/tmp/java_{self.port}"
+            if Path(java_tmpdir).exists():
+                tempfile.TemporaryDirectory._rmtree(java_tmpdir)
 
     def __repr__(self):
         return "Malmo[{}:{}, proc={}, addr={}:{}, locked={}]".format(
@@ -902,7 +918,7 @@ def launch_instance_manager():
         print("Removing the performance directory!")
         try:
             shutil.rmtree(InstanceManager.STATUS_DIR)
-        except Exception:
+        except:
             pass
         finally:
             if not os.path.exists(InstanceManager.STATUS_DIR):
