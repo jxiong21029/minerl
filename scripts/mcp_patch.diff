@@ -543,7 +543,7 @@ diff -u1 -rN MCP-Reborn-vanilla/launchClient.bat MCP-Reborn/launchClient.bat
 diff -u1 -rN MCP-Reborn-vanilla/launchClient.sh MCP-Reborn/launchClient.sh
 --- MCP-Reborn-vanilla/launchClient.sh	1970-01-01 01:00:00.000000000 +0100
 +++ MCP-Reborn/launchClient.sh	2022-06-21 00:09:56.279206096 +0100
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,55 @@
 +#!/bin/bash
 +
 +# run from the script directory
@@ -594,8 +594,9 @@ diff -u1 -rN MCP-Reborn-vanilla/launchClient.sh MCP-Reborn/launchClient.sh
 +    exit 1
 +fi
 +
++mkdir /tmp/java_$port
 +fatjar=build/libs/mcprec-6.13.jar
-+java -Xmx$maxMem -jar $fatjar --envPort=$port
++java -Djava.io.tmpdir=/tmp/java_$port -Xmx$maxMem -jar $fatjar --envPort=$port
 +[ $replaceable -gt 0 ]
 +
 diff -u1 -rN MCP-Reborn-vanilla/settings.gradle MCP-Reborn/settings.gradle
